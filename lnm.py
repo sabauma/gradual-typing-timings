@@ -45,7 +45,6 @@ def sanitize(variations):
 def read_data(fname):
     variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
     times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
-    times /= float(times[0,0])
     keys = sanitize(variations)
     return dict(zip(keys, times))
 
