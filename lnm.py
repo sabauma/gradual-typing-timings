@@ -2,8 +2,10 @@
 import numpy as np
 
 def adjacent_variations(variation):
-    var = np.array(variation, dtype='i')
-    I = np.identity(len(var), dtype='i')
+    """ Given a variation represented as a bit string, return all variations
+        one step above in the lattice """
+    var = np.array(variation, dtype='b')
+    I = np.identity(len(var), dtype='b')
     swaps = I[var == 0,:]
     yield variation
     for i in range(swaps.shape[0]):
@@ -40,7 +42,7 @@ class LNM(object):
         return result
 
 def sanitize(variations):
-    return [tuple(map(int, var[9:])) for var in variations]
+    return [tuple(map(lambda x: bool(int(x)), var[9:])) for var in variations]
 
 def read_data(fname):
     variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
