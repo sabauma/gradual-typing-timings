@@ -1,5 +1,6 @@
 
 import numpy as np
+from graph import Graph
 
 def adjacent_variations(variation):
     """ Given a variation represented as a bit string, return all variations
@@ -25,47 +26,29 @@ class LNM(object):
         self.graph = graph
         self.cache = {}
 
-    def compute_lnm_time(self, variation, L, entry=0):
-        """ variation: tuple bit string of current variation
-            graph:     dict mapping variation to timings
-            L:         integer value """
-        if L == 0:
-            return self.graph[variation][entry]
-        key = (variation, L, entry)
-        lup = self.cache.get(key, None)
-        if lup is not None:
-            return lup
-        l = L - 1
-        result = min((self.compute_lnm_time(var, l, entry=entry)
-                     for var in adjacent_variations(variation)))
-        self.cache[key] = result
-        return result
+    def _compute_lnm_time(self, variation, L):
+        reachable = self.graph.distance_from(variation, L)
+        acc = reachable[0].payload
+        for n in reachable[1:]:
+            acc = np.minimum(acc, n.payload)
+        return acc
+
+    def compute_lnm_time(self, L):
+        graph = self.graph
+        res = ((key, self._compute_lnm_time(key, L)) for key in self.graph.iterkeys())
+        return Graph(res)
+
+def compute_lnm_times(graph, L=0):
+    return LNM(graph).compute_lnm_time(L=L)
 
 def sanitize(variations):
-    return [tuple(map(lambda x: bool(int(x)), var[9:])) for var in variations]
+    return [var[9:] for var in variations]
 
 def read_data(fname):
     variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
     times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
     keys = sanitize(variations)
-    return dict(zip(keys, times))
-
-def compute_lnm_times(graph, L=0):
-    lnm = LNM(graph)
-    new_graph = {}
-    for key, entries in graph.iteritems():
-        new_times = [None] * len(entries)
-        for entry in range(len(entries)):
-            new_times[entry] = lnm.compute_lnm_time(key, L, entry)
-        new_graph[key] = np.array(new_times)
-    return new_graph
-
-def mkgraph(keys, vals):
-    return dict(zip(keys, vals))
-
-def ungraph(graph):
-    keys = sorted(graph.keys())
-    return (keys, np.array([graph[key] for key in keys]))
+    return Graph.fromkeyvals(keys, times)
 
 if __name__ == '__main__':
     data = read_data('results_tetris.txt')
