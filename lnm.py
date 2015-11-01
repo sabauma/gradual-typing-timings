@@ -27,11 +27,9 @@ class LNM(object):
         self.cache = {}
 
     def _compute_lnm_time(self, variation, L):
-        reachable = self.graph.distance_from(variation, L)
-        acc = reachable[0].payload
-        for n in reachable[1:]:
-            acc = np.minimum(acc, n.payload)
-        return acc
+        graph = self.graph
+        reachable = (p.payload for p in graph.distance_from(variation, L))
+        return reduce(np.minimum, reachable)
 
     def compute_lnm_time(self, L):
         graph = self.graph
