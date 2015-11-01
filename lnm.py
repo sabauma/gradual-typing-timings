@@ -11,6 +11,7 @@ def memoize(func):
         result = func(*args)
         cache[args] = result
         return result
+    wrapper.__name__ = func.__name__
     return wrapper
 
 @memoize
@@ -31,13 +32,13 @@ class LNM(object):
         reachable = (p.payload for p in graph.within_distance(variation, L))
         return reduce(np.minimum, reachable)
 
-    def compute_lnm_time(self, L):
+    def compute_lnm_graph(self, L):
         graph = self.graph
         res = ((key, self._compute_lnm_time(key, L)) for key in graph.iterkeys())
         return Graph(res, adjacent_variations)
 
 def compute_lnm_times(graph, L=0):
-    return LNM(graph).compute_lnm_time(L)
+    return LNM(graph).compute_lnm_graph(L)
 
 def sanitize(variations):
     return [var[9:] for var in variations]
