@@ -2,51 +2,54 @@
 import numpy as np
 from graph import Graph
 
+def memoize(func):
+    cache = {}
+    def wrapper(*args):
+        lup = cache.get(args, None)
+        if lup is not None:
+            return lup
+        result = func(*args)
+        cache[args] = result
+        return result
+    return wrapper
+
+@memoize
 def adjacent_variations(variation):
     """ Given a variation represented as a bit string, return all variations
         one step above in the lattice """
-    var = np.array(variation, dtype='b')
+    var = np.array(list(variation), dtype='b')
     I = np.identity(len(var), dtype='b')
     swaps = I[var == 0,:]
-    yield variation
-    for i in range(swaps.shape[0]):
-        yield tuple(variation + swaps[i,:])
-
-def compute_lnm_time(variation, graph, L, entry=0):
-    """ variation: tuple bit string of current variation
-        graph:     dict mapping variation to timings
-        L:         integer value """
-    if L == 0:
-        return graph[variation][entry]
-    l = L - 1
-    return min((compute_lnm_time(var, graph, l) for var in adjacent_variations(variation)))
+    return tuple((''.join([str(j) for j in var + swaps[i,:]]) for i in range(swaps.shape[0])))
 
 class LNM(object):
     def __init__(self, graph):
         self.graph = graph
-        self.cache = {}
 
     def _compute_lnm_time(self, variation, L):
         graph = self.graph
-        reachable = (p.payload for p in graph.distance_from(variation, L))
+        reachable = (p.payload for p in graph.within_distance(variation, L))
         return reduce(np.minimum, reachable)
 
     def compute_lnm_time(self, L):
         graph = self.graph
-        res = ((key, self._compute_lnm_time(key, L)) for key in self.graph.iterkeys())
-        return Graph(res)
+        res = ((key, self._compute_lnm_time(key, L)) for key in graph.iterkeys())
+        return Graph(res, adjacent_variations)
 
 def compute_lnm_times(graph, L=0):
-    return LNM(graph).compute_lnm_time(L=L)
+    return LNM(graph).compute_lnm_time(L)
 
 def sanitize(variations):
     return [var[9:] for var in variations]
+
+def fromkeyvals(keys, *args):
+    return Graph.fromkeyvals(keys, np.array(zip(*args)), adjacent_variations)
 
 def read_data(fname):
     variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
     times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
     keys = sanitize(variations)
-    return Graph.fromkeyvals(keys, times)
+    return Graph.fromkeyvals(keys, times, adjacent_variations)
 
 if __name__ == '__main__':
     data = read_data('results_tetris.txt')

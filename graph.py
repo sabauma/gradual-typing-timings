@@ -1,15 +1,6 @@
 
 import numpy as np
 
-def adjacent_variations(variation):
-    """ Given a variation represented as a bit string, return all variations
-        one step above in the lattice """
-    var = np.array(list(variation), dtype='b')
-    I = np.identity(len(var), dtype='b')
-    swaps = I[var == 0,:]
-    for i in range(swaps.shape[0]):
-        yield ''.join([str(i) for i in var + swaps[i,:]])
-
 class Node(object):
     __slots__ = ('name', 'adjacent', 'payload')
     def __init__(self, name, adjacent, payload):
@@ -17,7 +8,7 @@ class Node(object):
         self.adjacent = adjacent
         self.payload  = payload
 
-    def distance(self, distance=0, lte=True):
+    def within_distance(self, distance):
         todo = {self}
         for i in xrange(distance):
             todo = todo.union((neighbor for node in todo for neighbor in node.adjacent))
@@ -42,12 +33,12 @@ class NodeCounter(object):
         return nid
 
 class Graph(object):
-    def __init__(self, keyvals):
+    def __init__(self, keyvals, adjacent):
         self.graph = {}
         for k, v in keyvals:
             node = self.get_cached_node(k)
             node.payload = v
-            node.adjacent = map(self.get_cached_node, adjacent_variations(k))
+            node.adjacent = map(self.get_cached_node, adjacent(k))
 
     def get_cached_node(self, nodeid):
         node = self.graph.get(nodeid, None)
@@ -56,8 +47,8 @@ class Graph(object):
             self.graph[nodeid] = node
         return node
 
-    def distance_from(self, node, distance=0):
-        return self.graph[node].distance(distance)
+    def within_distance(self, node, distance):
+        return self.graph[node].within_distance(distance)
 
     def ungraph(self):
         graph = self.graph
@@ -84,9 +75,9 @@ class Graph(object):
         return Graph(it)
 
     @staticmethod
-    def fromkeyvals(keys, vals):
+    def fromkeyvals(keys, vals, adjacent):
         from itertools import izip
-        return Graph(izip(keys, vals))
+        return Graph(izip(keys, vals), adjacent)
 
     @staticmethod
     def fromdict(dict):
