@@ -10,7 +10,7 @@ class Node(object):
 
     def within_distance(self, distance):
         todo = {self}
-        for i in xrange(distance):
+        for _ in xrange(distance):
             todo = todo.union((neighbor for node in todo for neighbor in node.adjacent))
         return list(todo)
 
