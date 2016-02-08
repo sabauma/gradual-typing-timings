@@ -1,4 +1,5 @@
 
+import re
 import numpy as np
 from graph import Graph
 
@@ -41,7 +42,11 @@ def compute_lnm_times(graph, L=0):
     return LNM(graph).compute_lnm_graph(L)
 
 def sanitize(variations):
-    return [var[9:] for var in variations]
+    result = []
+    for var in variations:
+        clean = re.sub("[^01]", "", var)
+        result.append(clean)
+    return result
 
 def fromkeyvals(keys, *args):
     return Graph.fromkeyvals(keys, np.array(zip(*args)), adjacent_variations)
@@ -52,14 +57,14 @@ def read_data(fname):
     keys = sanitize(variations)
     return Graph.fromkeyvals(keys, times, adjacent_variations)
 
-if __name__ == '__main__':
-    data = read_data('results_tetris.txt')
-    graph1 = compute_lnm_times(data, L=1)
-    graph2 = compute_lnm_times(data, L=2)
-    assert set(graph1.keys()) == set(graph2.keys()) and len(graph1) == len(graph2)
-    for key in graph1.iterkeys():
-        print graph1[key] - graph2[key]
-        # assert np.all(graph1[key] == graph2[key])
+# if __name__ == '__main__':
+    # data = read_data('results_tetris.txt')
+    # graph1 = compute_lnm_times(data, L=1)
+    # graph2 = compute_lnm_times(data, L=2)
+    # assert set(graph1.keys()) == set(graph2.keys()) and len(graph1) == len(graph2)
+    # for key in graph1.iterkeys():
+        # print graph1[key] - graph2[key]
+        # # assert np.all(graph1[key] == graph2[key])
 
 # variation = np.genfromtxt("results_tetris.txt", usecols=(0,), dtype=None)
 # time = np.genfromtxt("results_tetris.txt", usecols=(1,2,3), dtype='i')
