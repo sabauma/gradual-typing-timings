@@ -48,8 +48,11 @@ def sanitize(variations):
         result.append(clean)
     return result
 
-def fromkeyvals(keys, *args):
+def fromkeyvals_transpose(keys, *args):
     return Graph.fromkeyvals(keys, np.array(zip(*args)), adjacent_variations)
+
+def fromkeyvals(keys, args):
+    return Graph.fromkeyvals(keys, args, adjacent_variations)
 
 def read_data(fname):
     variations = np.genfromtxt(fname, usecols=(0,), dtype=None)

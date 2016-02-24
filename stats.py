@@ -5,6 +5,13 @@ import pylab
 from scipy.stats import cumfreq
 from pandas      import DataFrame
 from ipy_table   import *
+from lnm         import sanitize
+
+def read_raw_data(fname):
+    variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
+    times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
+    keys = sanitize(variations)
+    return keys, times
 
 def make_slowdown_data(fname):
     data = np.genfromtxt(fname, usecols=(1,2,3))
