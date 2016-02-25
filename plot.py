@@ -18,8 +18,8 @@ LABELS = ['racket', 'pycket', 'hidden']
 
 parser = argparse.ArgumentParser(description="Plot some things")
 parser.add_argument('action', help="what plot to generate")
-parser.add_argument('pattern')
-parser.add_argument('--output', default=None, nargs=1)
+parser.add_argument('pattern', help="glob pattern describing the files I should eat")
+parser.add_argument('--output', default=None, nargs=1, type=str)
 parser.add_argument('--args', nargs=argparse.REMAINDER)
 
 def print_help():
@@ -55,7 +55,6 @@ def slowdown_cdf(args, data):
     results = graph.ungraph()[1]
     results = zip(*results)
     entries = means.shape[0]
-
     fig, ax = plt.subplots(nrows=1, ncols=1)
 
     for i, result in enumerate(results):
@@ -76,17 +75,20 @@ def violin(args, data):
     means = data.means
     vars  = data.variances
 
-    fix, ax = plt.subplots(nrows=1, ncols=1)
-
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(16, 5))
     for i in range(data.times.shape[-1]):
         parts = ax.violinplot(data.times[:,:,i], showmedians=True)
         for part in parts['bodies']:
             part.set_facecolor(COLORS[i])
+        parts['cmedians'].set_color(COLORS[i])
         parts['cmins'].set_color(COLORS[i])
         parts['cmaxes'].set_color(COLORS[i])
         parts['cbars'].set_color(COLORS[i])
 
-    plt.setp(ax, xticks=[y+1 for y in range(len(data.times))], xticklabels=data.names)
+    ax.set_xticks([y+1 for y in range(len(data.names))])
+    ax.set_xticklabels(data.names, rotation='vertical')
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(5)
 
 PLOT = { 'violin': violin, 'slowdown_cdf': slowdown_cdf }
 
@@ -107,6 +109,8 @@ def main(args):
 
     if output is None:
         plt.show()
+    else:
+        plt.savefig(output[0], dpi=500)
 
     # graph = lnm.fromkeyvals(data.names, data.means)
     return data
