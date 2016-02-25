@@ -1,6 +1,6 @@
 
 import numpy as np
-import pylab
+import matplotlib.pyplot as plt
 
 from scipy.stats import cumfreq
 from pandas      import DataFrame
@@ -54,7 +54,7 @@ def slowdown_cdf(*args, **kwargs):
             entries = len(data)
         cdf = np.cumsum(counts)
         if not color:
-            pylab.plot(bin_edges[:-1], cdf, label=label)
+            plt.plot(bin_edges[:-1], cdf, label=label)
         else:
             pylab.plot(bin_edges[:-1], cdf, color=color, label=label)
     fname = "slowdown_{name}.pdf".format(**kwargs)
