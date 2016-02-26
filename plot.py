@@ -18,15 +18,14 @@ LABELS = ['racket', 'pycket', 'hidden']
 
 parser = argparse.ArgumentParser(description="Plot some things")
 parser.add_argument('action', help="what plot to generate")
-parser.add_argument('pattern', help="glob pattern describing the files I should eat")
+parser.add_argument('data', nargs='+', help="data files to process", type=str)
 parser.add_argument('--output', default=None, nargs=1, type=str)
 parser.add_argument('--args', nargs=argparse.REMAINDER)
 
 def print_help():
     pass
 
-def read_data_files(pattern):
-    files = glob.glob(pattern)
+def read_data_files(files):
     print "processing {} file(s)".format(len(files))
 
     if not files:
@@ -42,10 +41,7 @@ def read_data_files(pattern):
     return Data(keys[0], np.array(times), means, variances)
 
 def slowdown_cdf(args, data):
-    if args is not None and len(args) >= 1:
-        L = int(args[0])
-    else:
-        L = 0
+    L = int(args[0]) if args else 0
 
     means = data.means
     slowdowns = means / means[0,:]
@@ -87,6 +83,7 @@ def violin(args, data):
 
     ax.set_xticks([y+1 for y in range(len(data.names))])
     ax.set_xticklabels(data.names, rotation='vertical')
+    ax.set_ylim((0, 700000))
     for tick in ax.xaxis.get_major_ticks():
         tick.label.set_fontsize(5)
 
@@ -94,8 +91,8 @@ PLOT = { 'violin': violin, 'slowdown_cdf': slowdown_cdf }
 
 def main(args):
 
-    plot_type = args.action
-    pattern   = args.pattern
+    plot_type   = args.action
+    input_files = args.data
 
     output = args.output
 
@@ -104,7 +101,7 @@ def main(args):
     except KeyError:
         raise ValueError('invalid plot type "{}"'.format(plot_type))
 
-    data = read_data_files(pattern)
+    data = read_data_files(input_files)
     plot(args.args, data)
 
     if output is None:
