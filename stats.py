@@ -1,16 +1,16 @@
 
+import lnm
 import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.stats import cumfreq
 from pandas      import DataFrame
 from ipy_table   import *
-from lnm         import sanitize
 
 def read_raw_data(fname):
     variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
     times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
-    keys = sanitize(variations)
+    keys = lnm.sanitize(variations)
     return keys, times
 
 def make_slowdown_data(fname):
@@ -56,17 +56,17 @@ def slowdown_cdf(*args, **kwargs):
         if not color:
             plt.plot(bin_edges[:-1], cdf, label=label)
         else:
-            pylab.plot(bin_edges[:-1], cdf, color=color, label=label)
+            plt.plot(bin_edges[:-1], cdf, color=color, label=label)
     fname = "slowdown_{name}.pdf".format(**kwargs)
-    pylab.axvline(3, color='y')
-    pylab.axvline(10, color='k')
-    pylab.axhline(entries * 0.7, color='c', ls='--')
-    pylab.xlabel('slowdown factor')
-    pylab.xlim((1,10))
-    pylab.ylim((0,entries))
-    pylab.ylabel('number below')
-    pylab.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
-    pylab.savefig(fname)
+    plt.axvline(3, color='y')
+    plt.axvline(10, color='k')
+    plt.axhline(entries * 0.7, color='c', ls='--')
+    plt.xlabel('slowdown factor')
+    plt.xlim((1,10))
+    plt.ylim((0,entries))
+    plt.ylabel('number below')
+    plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+    plt.savefig(fname)
 
 def compute_lnm_deliverable(slowdown_graph, L):
     graph = lnm.compute_lnm_times(slowdown_graph, L)
