@@ -6,6 +6,7 @@ import argparse
 import glob
 import lnm
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import os
 import stats
@@ -71,19 +72,26 @@ def violin(args, data):
     means = data.means
     vars  = data.variances
 
+    fake_handles = []
+
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(16, 5))
-    for i in range(data.times.shape[-1]):
+    N = data.times.shape[-1]
+    for i, color in izip(range(N), COLORS):
         parts = ax.violinplot(data.times[:,:,i], showmedians=True)
         for part in parts['bodies']:
-            part.set_facecolor(COLORS[i])
-        parts['cmedians'].set_color(COLORS[i])
-        parts['cmins'].set_color(COLORS[i])
-        parts['cmaxes'].set_color(COLORS[i])
-        parts['cbars'].set_color(COLORS[i])
+            part.set_facecolor(color)
+        parts['cmedians'].set_color(color)
+        parts['cmins'].set_color(color)
+        parts['cmaxes'].set_color(color)
+        parts['cbars'].set_color(color)
 
-    ax.set_xticks([y+1 for y in range(len(data.names))])
+        patch = mpatches.Patch(color=color)
+        fake_handles.append(patch)
+
+    ax.legend(fake_handles, LABELS[:N], bbox_to_anchor=(1.0, 0.5))
+
+    ax.set_xticks(range(1, len(data.names) + 1))
     ax.set_xticklabels(data.names, rotation='vertical')
-    ax.set_ylim((0, 700000))
     for tick in ax.xaxis.get_major_ticks():
         tick.label.set_fontsize(5)
 

@@ -1,0 +1,4 @@
+configuration00 12302 7279 7201 
+configuration01 566936 101600 77381 
+configuration10 86573 36291 33610 
+configuration11 9741 9056 9053 
