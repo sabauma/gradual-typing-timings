@@ -55,8 +55,6 @@ def slowdown_cdf(args, data):
 
     for i, result in enumerate(results):
         counts, bin_edges = np.histogram(result)
-        bin_edges = np.append([0.0], bin_edges)
-        counts = np.append([0.0], counts)
         cdf = np.cumsum(counts)
         ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
 
@@ -64,7 +62,7 @@ def slowdown_cdf(args, data):
     plt.axvline(10, color='k')
     plt.axhline(0.7 * entries, color='c', ls='--')
     plt.xlabel('slowdown factor')
-    plt.xlim((0,10))
+    plt.xlim((1,10))
     plt.ylim((0, entries))
     plt.ylabel('number below')
     plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
