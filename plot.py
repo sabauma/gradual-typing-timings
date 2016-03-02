@@ -55,6 +55,8 @@ def slowdown_cdf(args, data):
 
     for i, result in enumerate(results):
         counts, bin_edges = np.histogram(result)
+        bin_edges = np.append([0.0], bin_edges)
+        counts = np.append([0.0], counts)
         cdf = np.cumsum(counts)
         ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
 
