@@ -65,7 +65,7 @@ def slowdown_cdf(args, data):
     plt.xlim((1,10))
     plt.ylim((0, entries))
     plt.ylabel('number below')
-    plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+    # plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
 
 def violin(args, data):
     means = data.means
