@@ -1,0 +1,4 @@
+configuration00 12466 8876 8862 
+configuration01 575573 101643 74404 
+configuration10 76171 37755 33376 
+configuration11 9863 10876 10811 
