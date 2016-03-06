@@ -11,6 +11,9 @@ import os
 import stats
 import sys
 
+import matplotlib as mpl
+mpl.rc('lines', linewidth=3, color='r')
+
 Data = namedtuple('Data', 'names times means variances')
 
 COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
