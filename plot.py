@@ -61,11 +61,9 @@ def slowdown_cdf(args, data):
     plt.axvline(3, color='y')
     plt.axvline(10, color='k')
     plt.axhline(0.7 * entries, color='c', ls='--')
-    plt.xlabel('slowdown factor')
     plt.xlim((1,10))
+    ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, entries))
-    plt.ylabel('number below')
-    # plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
 
 def violin(args, data):
     means = data.means
