@@ -69,7 +69,7 @@ def slowdown_cdf(args, data):
 
     plt.axvline(3, color='y')
     plt.axvline(10, color='k')
-    plt.axhline(0.6 * entries, color='c', ls='--')
+    plt.axhline(int(0.6 * entries), color='c', ls='--')
     plt.xlim((1,10))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, entries))
