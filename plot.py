@@ -174,10 +174,29 @@ def violin_order_lattice(args, data):
     for tick in ax.xaxis.get_major_ticks():
         tick.label.set_fontsize(8)
 
+def slowdown_to_racket(args, data):
+    names = data.names
+    times = data.times
+    vars  = data.variances
+
+    s = data.means.shape[-1] - 1
+
+    base = data.means[:,0]
+    data = data.means[:,1:] / np.tile(base, (s, 1)).T
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(16, 5))
+    for i, color in izip(range(s), COLORS[1:]):
+        sys = data[:,i]
+        ax.scatter(base, sys, color=color)
+
+    ax.set_xlabel("racket runtime")
+    ax.set_ylabel("pycket relative runtime")
+
 PLOT = { 'violin': violin,
          'violin_order_runtime': violin_order_runtime,
          'violin_order_lattice': violin_order_lattice,
-         'slowdown_cdf': slowdown_cdf, }
+         'slowdown_cdf': slowdown_cdf,
+         'slowdown_to_racket': slowdown_to_racket, }
 
 def main(args):
 
