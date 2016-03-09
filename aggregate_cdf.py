@@ -27,7 +27,7 @@ def print_help():
 
 def read_data_files(pattern):
     files = glob.glob(pattern)
-    print "processing {} file(s)".format(len(files))
+    # print "processing {} file(s)".format(len(files))
 
     if not files:
         raise ValueError("cannot find any matching files")
@@ -67,10 +67,10 @@ def slowdown_cdf(data):
     # plt.ylim((0, entries))
     plt.savefig("figs/aggregate-cdf.pdf")
 
-    avg_slowdown = np.dot(weights, all_data) / np.sum(weights)
-    print "Weighted Average slowdown: ", ", ".join(["%s=%f" % (LABELS[i], avg_slowdown[i]) for i in range(len(avg_slowdown))])
-    avg_slowdown = np.mean(all_data, axis=0)
-    print "Unweighted Average slowdown: ", ", ".join(["%s=%f" % (LABELS[i], avg_slowdown[i]) for i in range(len(avg_slowdown))])
+    avg_slowdown_weighted = np.dot(weights, all_data) / np.sum(weights)
+    avg_slowdown_unweighted = np.mean(all_data, axis=0)
+    for i in range(len(avg_slowdown_weighted)):
+        print "%s & %f & %f \\\\" % (LABELS[i].capitalize(), avg_slowdown_weighted[i], avg_slowdown_unweighted[i])
 
 if __name__ == '__main__':
     slowdown_cdf([read_data_files(g) for g in sys.argv[1:]])
