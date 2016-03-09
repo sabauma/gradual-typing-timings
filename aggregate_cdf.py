@@ -65,7 +65,7 @@ def slowdown_cdf(data):
     plt.xlim((1,10))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     # plt.ylim((0, entries))
-    plt.savefig("aggregate-cdf.pdf")
+    plt.savefig("figs/aggregate-cdf.pdf")
 
     avg_slowdown = np.dot(weights, all_data) / np.sum(weights)
     print "Weighted Average slowdown: ", ", ".join(["%s=%f" % (LABELS[i], avg_slowdown[i]) for i in range(len(avg_slowdown))])
