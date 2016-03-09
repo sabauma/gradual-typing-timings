@@ -68,9 +68,8 @@ def slowdown_cdf(data):
     # plt.ylim((0, entries))
     plt.savefig("aggregate-cdf.pdf")
 
-    total_slowdown = all_data * np.tile(weights, (N, 1)).T
-    total = np.sum(total_slowdown, axis=0) / np.sum(weights)
-    print "Average slowdown: ", ", ".join(["%s=%f" % (LABELS[i], total[i]) for i in range(len(total))])
+    avg_slowdown = np.dot(all_data.T, weights) / np.sum(weights)
+    print "Average slowdown: ", ", ".join(["%s=%f" % (LABELS[i], avg_slowdown[i]) for i in range(len(avg_slowdown))])
 
 if __name__ == '__main__':
     slowdown_cdf([read_data_files(g) for g in sys.argv[1:]])
