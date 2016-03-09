@@ -72,7 +72,7 @@ def slowdown_cdf(data):
     for i in range(len(avg_slowdown_weighted)):
         s1 = round(avg_slowdown_weighted[i], 1)
         s2 = round(avg_slowdown_unweighted[i], 1)
-        print "%s & %0.1f & %0.1f \\\\" % (LABELS[i].capitalize(), s1, s2)
+        print "%s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), s1, s2)
 
 if __name__ == '__main__':
     slowdown_cdf([read_data_files(g) for g in sys.argv[1:]])
