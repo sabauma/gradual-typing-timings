@@ -70,7 +70,9 @@ def slowdown_cdf(data):
     avg_slowdown_weighted = np.dot(weights, all_data) / np.sum(weights)
     avg_slowdown_unweighted = np.mean(all_data, axis=0)
     for i in range(len(avg_slowdown_weighted)):
-        print "%s & %f & %f \\\\" % (LABELS[i].capitalize(), avg_slowdown_weighted[i], avg_slowdown_unweighted[i])
+        s1 = round(avg_slowdown_weighted[i], 1)
+        s2 = round(avg_slowdown_unweighted[i], 1)
+        print "%s & %0.1f & %0.1f \\\\" % (LABELS[i].capitalize(), s1, s2)
 
 if __name__ == '__main__':
     slowdown_cdf([read_data_files(g) for g in sys.argv[1:]])
