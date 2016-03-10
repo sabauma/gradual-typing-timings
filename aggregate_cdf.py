@@ -58,7 +58,7 @@ def slowdown_cdf(data):
         cdf = np.cumsum(counts)
         ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
 
-    entries = np.sum(weights)
+    entries = len(data)
     plt.axvline(3, color='y')
     plt.axvline(10, color='k')
     plt.axhline(int(0.6 * entries), color='c', ls='--')
@@ -67,7 +67,7 @@ def slowdown_cdf(data):
     plt.ylim((0, entries))
     plt.savefig("figs/aggregate-cdf.pdf")
 
-    avg_slowdown_weighted = np.dot(weights, all_data) / np.sum(weights)
+    avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
     avg_slowdown_unweighted = np.mean(all_data, axis=0)
     for i in range(len(avg_slowdown_weighted)):
         s1 = round(avg_slowdown_weighted[i], 1)

@@ -63,6 +63,8 @@ def slowdown_cdf(args, data):
         cdf = np.cumsum(counts)
         ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
 
+    print np.max(results, axis=1)
+    print np.sum(np.array(results) <= 3.0, axis=1),
     print np.sum(np.array(results) <= 3.0, axis=1) / float(entries)
 
     step = float(len(means)) / 5.0
