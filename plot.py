@@ -59,11 +59,10 @@ def slowdown_cdf(args, data):
     fig, ax = plt.subplots(nrows=1, ncols=1)
 
     for i, result in enumerate(results):
-        counts, bin_edges = np.histogram(result, bins=entries)
-        cdf = np.cumsum(counts)
-        ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
+        result = list(sorted(result))
+        ax.plot(result, range(entries), label=LABELS[i], color=COLORS[i])
 
-    print np.sum(slowdowns <= 3.0, axis=0) / float(entries)
+    print np.sum(np.array(results) <= 3.0, axis=1) / float(entries)
 
     step = float(len(means)) / 5.0
     yticks = [int(round(step * i)) for i in range(6)]

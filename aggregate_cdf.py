@@ -53,10 +53,8 @@ def slowdown_cdf(data):
 
     N = all_data.shape[-1]
     for i in range(N):
-        result = all_data[:,i]
-        counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
-        cdf = np.cumsum(counts)
-        ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
+        result = list(sorted(all_data[:,i]))
+        ax.plot(result, range(len(result)), label=LABELS[i], color=COLORS[i])
 
     entries = np.sum(weights)
     plt.axvline(3, color='y')
