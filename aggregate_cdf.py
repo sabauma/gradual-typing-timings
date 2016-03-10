@@ -64,7 +64,7 @@ def slowdown_cdf(data):
     plt.axhline(int(0.6 * entries), color='c', ls='--')
     plt.xlim((1,10))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
-    # plt.ylim((0, entries))
+    plt.ylim((0, entries))
     plt.savefig("figs/aggregate-cdf.pdf")
 
     avg_slowdown_weighted = np.dot(weights, all_data) / np.sum(weights)
