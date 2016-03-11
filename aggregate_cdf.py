@@ -62,7 +62,6 @@ def slowdown_cdf(data):
     entries = len(data)
     plt.axvline(3, color='y')
     plt.axvline(10, color='k')
-    plt.axhline(int(0.6 * entries), color='c', ls='--')
     plt.xlim((1,10))
 
     ax.set_xlabel("slowdown factor")
