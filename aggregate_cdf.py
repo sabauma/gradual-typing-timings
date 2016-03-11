@@ -83,7 +83,6 @@ def slowdown_cdf(data):
         ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
     max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
-    print max
 
     ax.axhline(1.0)
     plt.ylim((0, 2))
