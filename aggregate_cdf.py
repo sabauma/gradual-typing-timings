@@ -85,6 +85,7 @@ def slowdown_cdf(data):
     ax.axhline(1.0)
     plt.ylim((0, 2))
     plt.xlim((0, np.max(all_data[:,0] / all_data[0,0])))
+    ax.legend(loc='best')
     ax.set_xlabel("CRacket gradual typing overhead")
     ax.set_ylabel("Runtime relative to CRacket")
     plt.savefig("figs/aggregate-slowdown.pdf")
