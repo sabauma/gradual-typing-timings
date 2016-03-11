@@ -82,9 +82,13 @@ def slowdown_cdf(data):
     all_racket = reduce(np.append, [d.means[:,0] for d in data])
     for i in range(1, N):
         ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
+
+    max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
+    print max
+
     ax.axhline(1.0)
     plt.ylim((0, 2))
-    plt.xlim((0, np.max(all_data[:,0] / all_data[0,0])))
+    plt.xlim((0, max))
     ax.legend(loc='best')
     ax.set_xlabel("CRacket gradual typing overhead")
     ax.set_ylabel("Runtime relative to CRacket")
