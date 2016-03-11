@@ -16,6 +16,7 @@ import sys
 import matplotlib as mpl
 mpl.rc('lines', linewidth=3, color='r')
 mpl.rc('font', family='Arial', size=22)
+mpl.rc('figure', autolayout=True)
 
 Data = namedtuple('Data', 'names times means variances')
 
