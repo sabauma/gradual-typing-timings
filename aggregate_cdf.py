@@ -63,9 +63,13 @@ def slowdown_cdf(data):
     plt.axvline(10, color='k')
     plt.axhline(int(0.6 * entries), color='c', ls='--')
     plt.xlim((1,10))
+
+    ax.set_xlabel("slowdown factor")
+    ax.set_ylabel("# of benchmarks")
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, entries))
     plt.savefig("figs/aggregate-cdf.pdf")
+    plt.cla()
 
     avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
     avg_slowdown_unweighted = np.mean(all_data, axis=0)
@@ -73,6 +77,16 @@ def slowdown_cdf(data):
         s1 = round(avg_slowdown_weighted[i], 1)
         s2 = round(avg_slowdown_unweighted[i], 1)
         print "%s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), s1, s2)
+
+    all_racket = reduce(np.append, [d.means[:,0] for d in data])
+    for i in range(1, N):
+        ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
+    ax.axhline(1.0)
+    plt.ylim((0, 2))
+    plt.xlim((0, np.max(all_data[:,0] / all_data[0,0])))
+    ax.set_xlabel("CRacket gradual typing overhead")
+    ax.set_ylabel("Runtime relative to CRacket")
+    plt.savefig("figs/aggregate-slowdown.pdf")
 
 if __name__ == '__main__':
     slowdown_cdf([read_data_files(g) for g in sys.argv[1:]])

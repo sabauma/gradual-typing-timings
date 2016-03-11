@@ -134,7 +134,7 @@ def violin_order_runtime(args, data):
         patch = mpatches.Patch(color=color)
         fake_handles.append(patch)
 
-    ax.legend(fake_handles, LABELS[:N], bbox_to_anchor=(1.0, 0.5))
+    ax.legend(fake_handles, LABELS[:N], loc='best')
 
     ax.set_xticks(range(1, len(names) + 1))
     ax.set_xticklabels(names, rotation='vertical')
