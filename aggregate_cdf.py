@@ -22,6 +22,7 @@ Data = namedtuple('Data', 'names times means variances')
 
 COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
 LABELS = ['racket', 'pycket', 'hidden']
+LINESTYLES = ['-', '--', ':']
 
 def print_help():
     pass
@@ -42,34 +43,41 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
-def slowdown_cdf(data):
-
-    weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
-    slowdowns = [d.means / d.means[0,:] for d in data]
-
-    weights  = reduce(np.append, weights)
-    all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
+def slowdown_cdf(datas):
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
+    for number, data in enumerate(datas):
+        weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
+        slowdowns = [d.means / d.means[0,:] for d in data]
 
-    N = all_data.shape[-1]
-    for i in range(N):
-        result = all_data[:,i]
-        counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
-        cdf = np.cumsum(counts)
-        ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
+        weights  = reduce(np.append, weights)
+        all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
 
-    entries = len(data)
+        entries = len(data)
+        N = all_data.shape[-1]
+        for i in range(N):
+            result = all_data[:,i]
+            counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
+            cdf = np.cumsum(counts)
+            ax.plot(bin_edges[:-1], cdf / float(entries) * 100.0, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+
     plt.axvline(3, color='y')
     plt.axvline(10, color='k')
     plt.xlim((1,10))
 
     ax.set_xlabel("slowdown factor")
-    ax.set_ylabel("# of benchmarks")
+    ax.set_ylabel("% of configs")
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
-    plt.ylim((0, entries))
+    plt.ylim((0, 100))
     plt.savefig("figs/aggregate-cdf.pdf")
     plt.cla()
+
+    data = datas[0]
+    weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
+    slowdowns = [d.means / d.means[0,:] for d in data]
+
+    weights  = reduce(np.append, weights)
+    all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
 
     avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
     avg_slowdown_unweighted = np.mean(all_data, axis=0)
@@ -99,4 +107,11 @@ def slowdown_cdf(data):
     plt.savefig("figs/aggregate-slowdown.pdf")
 
 if __name__ == '__main__':
-    slowdown_cdf([read_data_files(g) for g in sys.argv[1:]])
+    args = sys.argv[1:]
+    outer = [[]]
+    for arg in args:
+        if arg == '--':
+            outer.append([])
+            continue
+        outer[-1].append(read_data_files(arg))
+    slowdown_cdf(outer)
