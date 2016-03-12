@@ -84,6 +84,8 @@ def slowdown_cdf(data):
 
     max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
 
+    ax.set_xticks(range(0, 10, 1) + range(10, max, 10))
+    ax.set_xticklabels(['' for i in range(10)] + range(10, max, 10))
     ax.axhline(1.0)
     plt.ylim((0, 2))
     plt.xlim((0, max))
