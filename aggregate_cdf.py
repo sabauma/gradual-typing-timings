@@ -23,6 +23,7 @@ Data = namedtuple('Data', 'names times means variances')
 COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
 LABELS = ['racket', 'pycket', 'hidden']
 LINESTYLES = ['-', '--', ':']
+SUFFIXES = ['', ' (6.2.1)']
 
 def print_help():
     pass
@@ -61,6 +62,14 @@ def slowdown_cdf(datas):
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf / float(entries) * 100.0, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
+        avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
+        avg_slowdown_unweighted = np.mean(all_data, axis=0)
+        for i in range(len(avg_slowdown_weighted)):
+            s1 = round(avg_slowdown_weighted[i], 1)
+            s2 = round(avg_slowdown_unweighted[i], 1)
+            print "%s %s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), SUFFIXES[number], s1, s2)
+        print "\\hline"
+
     plt.axvline(3, color='y')
     plt.axvline(10, color='k')
     plt.xlim((1,10))
@@ -78,13 +87,6 @@ def slowdown_cdf(datas):
 
     weights  = reduce(np.append, weights)
     all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
-
-    avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
-    avg_slowdown_unweighted = np.mean(all_data, axis=0)
-    for i in range(len(avg_slowdown_weighted)):
-        s1 = round(avg_slowdown_weighted[i], 1)
-        s2 = round(avg_slowdown_unweighted[i], 1)
-        print "%s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), s1, s2)
 
     all_racket = reduce(np.append, [d.means[:,0] for d in data])
     for i in range(1, N):
