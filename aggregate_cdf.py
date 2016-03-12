@@ -64,7 +64,10 @@ def slowdown_cdf(datas):
 
         avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
         avg_slowdown_unweighted = np.mean(all_data, axis=0)
-        print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
+        if number != 0:
+            print "\\hline"
+            print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
+            \print "\\hline"
         for i in range(len(avg_slowdown_weighted)):
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_unweighted[i], 1)
