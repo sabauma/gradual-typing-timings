@@ -82,7 +82,11 @@ def slowdown_cdf(data):
     for i in range(1, N):
         ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
+
     max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
+
+    perfect = np.arange(0.0, max, 0.01)
+    ax.plot(perfect, 1.0 / perfect, color='k')
 
     ax.set_xticks(range(0, 10, 1) + range(10, max, 10))
     ax.set_xticklabels(['' for i in range(10)] + range(10, max, 10))
