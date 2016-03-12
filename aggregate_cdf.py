@@ -66,7 +66,7 @@ def slowdown_cdf(datas):
     plt.xlim((1,10))
 
     ax.set_xlabel("slowdown factor")
-    ax.set_ylabel("% of configs")
+    ax.set_ylabel("% of benchmarks")
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, 100))
     plt.savefig("figs/aggregate-cdf.pdf")
