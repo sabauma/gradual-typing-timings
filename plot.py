@@ -37,7 +37,7 @@ def read_data_files(pattern):
     print "processing {} file(s)".format(len(files))
 
     if not files:
-        raise ValueError("cannot find any matching files")
+        raise ValueError("cannot find any matching files: " % pattern)
 
     keys, times = zip(*[stats.read_raw_data(fname) for fname in files])
     for i in keys:

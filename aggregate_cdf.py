@@ -31,7 +31,7 @@ def read_data_files(pattern):
     # print "processing {} file(s)".format(len(files))
 
     if not files:
-        raise ValueError("cannot find any matching files")
+        raise ValueError("cannot find any matching files: %s" % pattern)
 
     keys, times = zip(*[stats.read_raw_data(fname) for fname in files])
     for i in keys:
@@ -88,8 +88,8 @@ def slowdown_cdf(data):
     perfect = np.arange(0.0, max, 0.01)
     ax.plot(perfect, 1.0 / perfect, color='k')
 
-    ax.set_xticks(range(0, 10, 1) + range(10, max, 10))
-    ax.set_xticklabels(['' for i in range(10)] + range(10, max, 10))
+    ax.set_xticks(range(0, 10, 1) + range(10, max + 10, 10))
+    ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max + 10, 10))
     ax.axhline(1.0)
     plt.ylim((0, 2))
     plt.xlim((0, max))
