@@ -3,6 +3,7 @@ from collections import namedtuple
 from itertools   import izip
 
 import argparse
+import glob
 import lnm
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -20,6 +21,7 @@ Data = namedtuple('Data', 'names times means variances')
 
 COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
 LABELS = ['racket', 'pycket', 'hidden']
+LINESTYLES = ['-', '--', ':']
 
 parser = argparse.ArgumentParser(description="Plot some things")
 parser.add_argument('action', help="what plot to generate")
@@ -30,7 +32,8 @@ parser.add_argument('--args', nargs=argparse.REMAINDER)
 def print_help():
     pass
 
-def read_data_files(files):
+def read_data_files(pattern):
+    files = glob.glob(pattern)
     print "processing {} file(s)".format(len(files))
 
     if not files:
@@ -45,39 +48,44 @@ def read_data_files(files):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
-def slowdown_cdf(args, data):
+def slowdown_cdf(args, datas):
     L = int(args[0]) if args else 0
 
-    means = data.means
-    slowdowns = means / means[0,:]
-    graph = lnm.fromkeyvals(data.names, slowdowns)
-    graph = lnm.compute_lnm_times(graph, L)
-
-    results = graph.ungraph()[1]
-    results = zip(*results)
-    entries = means.shape[0]
     fig, ax = plt.subplots(nrows=1, ncols=1)
+    for number, data in enumerate(datas):
+        means = data.means
+        slowdowns = means / means[0,:]
+        graph = lnm.fromkeyvals(data.names, slowdowns)
+        graph = lnm.compute_lnm_times(graph, L)
 
-    for i, result in enumerate(results):
-        counts, bin_edges = np.histogram(result, bins=entries)
-        cdf = np.cumsum(counts)
-        ax.plot(bin_edges[:-1], cdf, label=LABELS[i], color=COLORS[i])
+        results = graph.ungraph()[1]
+        results = zip(*results)
+        entries = means.shape[0]
 
-    print np.max(results, axis=1)
-    print np.sum(np.array(results) <= 3.0, axis=1),
-    print np.sum(np.array(results) <= 3.0, axis=1) / float(entries)
+        for i, result in enumerate(results):
+            if i == 1:
+                continue
+            counts, bin_edges = np.histogram(result, bins=entries)
+            cdf = np.cumsum(counts)
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-    step = float(len(means)) / 5.0
-    yticks = [int(round(step * i)) for i in range(6)]
+        print np.max(results, axis=1)
+        print np.sum(np.array(results) <= 3.0, axis=1),
+        print np.sum(np.array(results) <= 3.0, axis=1) / float(entries)
 
-    ax.set_yticks(yticks)
+        step = float(len(means)) / 5.0
+        yticks = [int(round(step * i)) for i in range(6)]
 
-    plt.axvline(3, color='y')
-    plt.axvline(10, color='k')
-    plt.axhline(0.6 * entries, color='c', ls='--')
-    plt.xlim((1,10))
-    ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
-    plt.ylim((0, entries))
+        ax.set_yticks(yticks)
+
+        upper = 10
+
+        plt.axvline(3, color='y')
+        plt.axhline(0.6 * entries, color='c', ls='--')
+        plt.xlim((1,upper))
+        ax.set_xticks(range(1, upper + 1))
+        ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+        plt.ylim((0, entries))
 
 def violin(args, data):
     means = data.means
@@ -214,7 +222,7 @@ def main(args):
     except KeyError:
         raise ValueError('invalid plot type "{}"'.format(plot_type))
 
-    data = read_data_files(input_files)
+    data = map(read_data_files, input_files)
     plot(args.args, data)
 
     if output is None:
