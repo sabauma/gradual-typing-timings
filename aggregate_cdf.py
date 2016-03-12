@@ -23,7 +23,7 @@ Data = namedtuple('Data', 'names times means variances')
 COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
 LABELS = ['racket', 'pycket', 'hidden']
 LINESTYLES = ['-', '--', ':']
-SUFFIXES = ['', ' (6.2.1)']
+SUFFIXES = ['Racket 6.4.0.8', 'Racket 6.2.1']
 
 def print_help():
     pass
@@ -64,6 +64,7 @@ def slowdown_cdf(datas):
 
         avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
         avg_slowdown_unweighted = np.mean(all_data, axis=0)
+        print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
         for i in range(len(avg_slowdown_weighted)):
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_unweighted[i], 1)
