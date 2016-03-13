@@ -96,7 +96,7 @@ def slowdown_cdf(datas):
     all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
 
     all_racket = reduce(np.append, [d.means[:,0] for d in data])
-    for i in range(1, N):
+    for i in range(2, N):
         ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
 
