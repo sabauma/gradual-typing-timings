@@ -57,6 +57,8 @@ def print_stats(slowdowns):
 
     for i in (0, 2):
         print "$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %d/%d $" % (ratio[i], max[i], mean[i], acceptable[i], N),
+        if not i:
+            print " & ",
     print "\\\\"
     # print "max: ", max
     # print "mean: ", mean
