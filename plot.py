@@ -34,7 +34,7 @@ def print_help():
 
 def read_data_files(pattern):
     files = glob.glob(pattern)
-    print "processing {} file(s)".format(len(files))
+    # print "processing {} file(s)".format(len(files))
 
     if not files:
         raise ValueError("cannot find any matching files: " % pattern)
@@ -48,6 +48,20 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
+def print_stats(slowdowns):
+    N = slowdowns.shape[0]
+    max = np.max(slowdowns, axis=0)
+    mean = np.mean(slowdowns, axis=0)
+    ratio = slowdowns[-1,:]
+    acceptable = np.sum(slowdowns < 3.0, axis=0)
+
+    for i in (0, 2):
+        print "$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %d/%d $" % (ratio[i], max[i], mean[i], acceptable[i], N),
+    # print "max: ", max
+    # print "mean: ", mean
+    # print "ratio: ", ratio
+    # print "acceptable: ", acceptable
+
 def slowdown_cdf(args, datas):
     L = int(args[0]) if args else 0
 
@@ -57,6 +71,9 @@ def slowdown_cdf(args, datas):
         slowdowns = means / means[0,:]
         graph = lnm.fromkeyvals(data.names, slowdowns)
         graph = lnm.compute_lnm_times(graph, L)
+
+        if number == 0:
+            print_stats(slowdowns)
 
         results = graph.ungraph()[1]
         results = zip(*results)
@@ -68,10 +85,6 @@ def slowdown_cdf(args, datas):
             counts, bin_edges = np.histogram(result, bins=max(entries, 128))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
-
-        print np.max(results, axis=1)
-        print np.sum(np.array(results) <= 3.0, axis=1),
-        print np.sum(np.array(results) <= 3.0, axis=1) / float(entries)
 
         step = float(len(means)) / 5.0
         yticks = [int(round(step * i)) for i in range(6)]
