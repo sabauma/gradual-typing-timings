@@ -56,7 +56,7 @@ def print_stats(slowdowns):
     acceptable = np.sum(slowdowns < 3.0, axis=0) / float(N) * 100.0
 
     print "%d &" % N,
-    print " & ".join(["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % (ratio[i], max[i], mean[i], acceptable[i]) for i in (0, 2)]),
+    print " & ".join(["\\multicolumn{|c}{1}{$ %0.1f $} & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % (ratio[i], max[i], mean[i], acceptable[i]) for i in (0, 2)]),
     print "\\\\"
     # print "max: ", max
     # print "mean: ", mean
