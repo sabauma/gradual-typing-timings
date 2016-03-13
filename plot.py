@@ -20,7 +20,7 @@ mpl.rc('font', family='Arial', size=22)
 Data = namedtuple('Data', 'names times means variances')
 
 COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
-LABELS = ['racket', 'pycket', 'hidden']
+LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
 
 parser = argparse.ArgumentParser(description="Plot some things")
