@@ -57,6 +57,8 @@ def slowdown_cdf(datas):
         entries = len(data)
         N = all_data.shape[-1]
         for i in range(N):
+            if i == 1:
+                continue
             result = all_data[:,i]
             counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
             cdf = np.cumsum(counts)
@@ -68,6 +70,8 @@ def slowdown_cdf(datas):
             print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
         for i in range(len(avg_slowdown_weighted)):
+            if i == 1:
+                continue
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_unweighted[i], 1)
             print "%s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), s1, s2)
