@@ -21,7 +21,7 @@ mpl.rc('figure', autolayout=True)
 Data = namedtuple('Data', 'names times means variances')
 
 COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
-LABELS = ['racket', 'pycket', 'hidden']
+LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
 SUFFIXES = ['Racket 6.4.0.8', 'Racket 6.2.1']
 
