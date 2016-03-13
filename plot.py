@@ -55,7 +55,7 @@ def print_stats(slowdowns):
     ratio = slowdowns[-1,:]
     acceptable = np.sum(slowdowns < 3.0, axis=0) / float(N) * 100.0
 
-    print " & ".join(["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % (ratio[i], max[i], mean[i], acceptable[i]) for i in (0, 2)]),
+    print " & ".join(["$ %d $ & $ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % (N, ratio[i], max[i], mean[i], acceptable[i]) for i in (0, 2)]),
     print "\\\\"
     # print "max: ", max
     # print "mean: ", mean
