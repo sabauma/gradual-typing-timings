@@ -85,9 +85,9 @@ def slowdown_cdf(datas):
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, 100))
     plt.savefig("figs/aggregate-cdf%s.pdf")
-    plt.cla()
 
     for number, data in enumerate(datas):
+        plt.cla()
         weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
         slowdowns = [d.means / d.means[0,:] for d in data]
 
