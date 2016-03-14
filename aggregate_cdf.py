@@ -20,7 +20,7 @@ mpl.rc('figure', autolayout=True)
 
 Data = namedtuple('Data', 'names times means variances')
 
-COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
+COLORS = [(255 / 255.0, 69 / 255.0, 0 / 255.0), (34 / 255.0, 139 / 255.0, 34 / 255.0), (36 / 255.0, 36 / 255.0, 140 / 255.0), (218 / 255.0, 165 / 255.0, 32 / 255.0)]
 LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
 SUFFIXES = ['Racket 6.4.0.8', 'Racket 6.2.1']
@@ -77,8 +77,7 @@ def slowdown_cdf(datas):
             print "%s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), s1, s2)
         print "\\hline"
 
-    plt.axvline(3, color='y')
-    plt.axvline(10, color='k')
+    plt.axvline(3, color=COLORS[-1])
     plt.xlim((1,10))
 
     ax.set_xlabel("slowdown factor")

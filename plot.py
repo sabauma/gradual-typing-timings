@@ -19,7 +19,8 @@ mpl.rc('font', family='Arial', size=22)
 
 Data = namedtuple('Data', 'names times means variances')
 
-COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
+# COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
+COLORS = [(255 / 255.0, 69 / 255.0, 0 / 255.0), (34 / 255.0, 139 / 255.0, 34 / 255.0), (36 / 255.0, 36 / 255.0, 140 / 255.0), (218 / 255.0, 165 / 255.0, 32 / 255.0)]
 LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
 
@@ -94,7 +95,7 @@ def slowdown_cdf(args, datas):
 
         upper = 10
 
-        plt.axvline(3, color='y')
+        plt.axvline(3, color=COLORS[-1])
         # plt.axhline(0.6 * entries, color='c', ls='--')
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
