@@ -106,7 +106,7 @@ def slowdown_cdf(datas):
 
         ax.set_xticks(range(0, 10, 1) + range(10, max + 10, 10))
         ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max + 10, 10))
-        ax.axhline(1.0, color='r')
+        ax.axhline(1.0, color=COLORS[0])
         plt.ylim((0, 2))
         plt.xlim((0, max))
         ax.legend(loc='best')
