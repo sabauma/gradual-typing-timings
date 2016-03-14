@@ -44,7 +44,7 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
-def slowdown_cdf(datas):
+def slowdown_cdf(datas, suffix):
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number, data in enumerate(datas):
@@ -84,7 +84,7 @@ def slowdown_cdf(datas):
     ax.set_ylabel("% of benchmarks")
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, 100))
-    plt.savefig("figs/aggregate-cdf.pdf")
+    plt.savefig("figs/aggregate-cdf%s.pdf" % suffix)
     plt.cla()
 
     data = datas[0]
@@ -112,14 +112,19 @@ def slowdown_cdf(datas):
     ax.legend(loc='best')
     ax.set_xlabel("Racket gradual typing overhead")
     ax.set_ylabel("Runtime relative to Racket")
-    plt.savefig("figs/aggregate-slowdown.pdf")
+    plt.savefig("figs/aggregate-slowdown%s.pdf" % suffix)
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+    if len(args) >= 2 and args[-2] == "--output":
+        suffix = args[-1]
+        args = args[:-2]
+    else:
+        suffix = ""
     outer = [[]]
     for arg in args:
         if arg == '--':
             outer.append([])
             continue
         outer[-1].append(read_data_files(arg))
-    slowdown_cdf(outer)
+    slowdown_cdf(outer, suffix)
