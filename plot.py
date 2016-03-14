@@ -19,7 +19,6 @@ mpl.rc('font', family='Arial', size=22)
 
 Data = namedtuple('Data', 'names times means variances')
 
-# COLORS = ['red', 'green', 'blue', 'yellow', 'orange']
 COLORS = [(255 / 255.0, 69 / 255.0, 0 / 255.0), (34 / 255.0, 139 / 255.0, 34 / 255.0), (36 / 255.0, 36 / 255.0, 140 / 255.0), (218 / 255.0, 165 / 255.0, 32 / 255.0)]
 LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
@@ -49,7 +48,14 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
-def print_stats(slowdowns):
+def slowdown_stats(slowdowns):
+    pass
+
+def stats_table(args, datas):
+    data = datas[0]
+
+    slowdowns = data.means / data.means[0,:]
+
     N = slowdowns.shape[0]
     max = np.max(slowdowns, axis=0)
     mean = np.mean(slowdowns, axis=0)
@@ -59,10 +65,6 @@ def print_stats(slowdowns):
     print "%d &" % N,
     print " & ".join(["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % (ratio[i], max[i], mean[i], acceptable[i]) for i in (0, 2)]),
     print "\\\\"
-    # print "max: ", max
-    # print "mean: ", mean
-    # print "ratio: ", ratio
-    # print "acceptable: ", acceptable
 
 def slowdown_cdf(args, datas):
     L = int(args[0]) if args else 0
@@ -73,9 +75,6 @@ def slowdown_cdf(args, datas):
         slowdowns = means / means[0,:]
         graph = lnm.fromkeyvals(data.names, slowdowns)
         graph = lnm.compute_lnm_times(graph, L)
-
-        if number == 0:
-            print_stats(slowdowns)
 
         results = graph.ungraph()[1]
         results = zip(*results)
@@ -223,7 +222,8 @@ PLOT = { 'violin': violin,
          'violin_order_runtime': violin_order_runtime,
          'violin_order_lattice': violin_order_lattice,
          'slowdown_cdf': slowdown_cdf,
-         'slowdown_to_racket': slowdown_to_racket, }
+         'slowdown_to_racket': slowdown_to_racket,
+         'stats_table': stats_table}
 
 def main(args):
 
@@ -240,9 +240,9 @@ def main(args):
     data = map(read_data_files, input_files)
     plot(args.args, data)
 
-    if output is None:
+    if output == "show":
         plt.show()
-    else:
+    elif output is not None:
         plt.savefig(output[0], dpi=500)
 
     # graph = lnm.fromkeyvals(data.names, data.means)
