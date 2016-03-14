@@ -44,7 +44,7 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
-def slowdown_cdf(datas, suffix):
+def slowdown_cdf(datas):
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number, data in enumerate(datas):
@@ -84,47 +84,42 @@ def slowdown_cdf(datas, suffix):
     ax.set_ylabel("% of benchmarks")
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, 100))
-    plt.savefig("figs/aggregate-cdf%s.pdf" % suffix)
+    plt.savefig("figs/aggregate-cdf%s.pdf")
     plt.cla()
 
-    data = datas[0]
-    weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
-    slowdowns = [d.means / d.means[0,:] for d in data]
+    for number, data in enumerate(datas):
+        weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
+        slowdowns = [d.means / d.means[0,:] for d in data]
 
-    weights  = reduce(np.append, weights)
-    all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
+        weights  = reduce(np.append, weights)
+        all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
 
-    all_racket = reduce(np.append, [d.means[:,0] for d in data])
-    for i in range(2, N):
-        ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
+        all_racket = reduce(np.append, [d.means[:,0] for d in data])
+        for i in range(2, N):
+            ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
 
-    max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
+        max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
 
-    perfect = np.arange(0.0, max, 0.01)
-    ax.plot(perfect, 1.0 / perfect, color='k')
+        perfect = np.arange(0.0, max, 0.01)
+        ax.plot(perfect, 1.0 / perfect, color='k')
 
-    ax.set_xticks(range(0, 10, 1) + range(10, max + 10, 10))
-    ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max + 10, 10))
-    ax.axhline(1.0, color='r')
-    plt.ylim((0, 2))
-    plt.xlim((0, max))
-    ax.legend(loc='best')
-    ax.set_xlabel("Racket gradual typing overhead")
-    ax.set_ylabel("Runtime relative to Racket")
-    plt.savefig("figs/aggregate-slowdown%s.pdf" % suffix)
+        ax.set_xticks(range(0, 10, 1) + range(10, max + 10, 10))
+        ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max + 10, 10))
+        ax.axhline(1.0, color='r')
+        plt.ylim((0, 2))
+        plt.xlim((0, max))
+        ax.legend(loc='best')
+        ax.set_xlabel("Racket gradual typing overhead")
+        ax.set_ylabel("Runtime relative to Racket")
+        plt.savefig("figs/aggregate-slowdown-%d.pdf" % number)
 
 if __name__ == '__main__':
     args = sys.argv[1:]
-    if len(args) >= 2 and args[-2] == "--output":
-        suffix = args[-1]
-        args = args[:-2]
-    else:
-        suffix = ""
     outer = [[]]
     for arg in args:
         if arg == '--':
             outer.append([])
             continue
         outer[-1].append(read_data_files(arg))
-    slowdown_cdf(outer, suffix)
+    slowdown_cdf(outer)
