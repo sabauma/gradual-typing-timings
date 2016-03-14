@@ -84,7 +84,7 @@ def slowdown_cdf(datas):
     ax.set_ylabel("% of benchmarks")
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(10)])
     plt.ylim((0, 100))
-    plt.savefig("figs/aggregate-cdf%s.pdf")
+    plt.savefig("figs/aggregate-cdf.pdf")
 
     for number, data in enumerate(datas):
         plt.cla()
