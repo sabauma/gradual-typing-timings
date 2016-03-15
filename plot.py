@@ -83,7 +83,7 @@ def slowdown_cdf(args, datas):
         for i, result in enumerate(results):
             if i == 1:
                 continue
-            counts, bin_edges = np.histogram(result, bins=max(entries, 128))
+            counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
@@ -117,7 +117,7 @@ def slowdown_cdf_small(args, datas):
         for i, result in enumerate(results):
             if i == 1:
                 continue
-            counts, bin_edges = np.histogram(result, bins=max(entries, 128))
+            counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
@@ -135,7 +135,11 @@ def slowdown_cdf_small(args, datas):
         plt.ylim((0, entries))
 
 def slowdown_cdf_hidden(args, datas):
-    L = int(args[0]) if args else 0
+
+    if args:
+        upper = args[0]
+    else:
+        upper = 5
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number, data in enumerate(datas):
@@ -143,6 +147,7 @@ def slowdown_cdf_hidden(args, datas):
         slowdowns = means / means[0,:]
         graph = lnm.fromkeyvals(data.names, slowdowns)
         graph = lnm.compute_lnm_times(graph, L)
+        print slowdowns
 
         results = graph.ungraph()[1]
         results = zip(*results)
@@ -151,7 +156,7 @@ def slowdown_cdf_hidden(args, datas):
         for i, result in enumerate(results):
             if i == 0:
                 continue
-            counts, bin_edges = np.histogram(result, bins=max(entries, 128))
+            counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
@@ -160,7 +165,6 @@ def slowdown_cdf_hidden(args, datas):
 
         ax.set_yticks(yticks)
 
-        upper = 5
 
         plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
