@@ -95,7 +95,40 @@ def slowdown_cdf(args, datas):
         upper = 10
 
         plt.axvline(3, color=COLORS[-1])
-        # plt.axhline(0.6 * entries, color='c', ls='--')
+        plt.xlim((1,upper))
+        ax.set_xticks(range(1, upper + 1))
+        ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+        plt.ylim((0, entries))
+
+def slowdown_cdf_small(args, datas):
+    L = int(args[0]) if args else 0
+
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+    for number, data in enumerate(datas):
+        means = data.means
+        slowdowns = means / means[0,:]
+        graph = lnm.fromkeyvals(data.names, slowdowns)
+        graph = lnm.compute_lnm_times(graph, L)
+
+        results = graph.ungraph()[1]
+        results = zip(*results)
+        entries = means.shape[0]
+
+        for i, result in enumerate(results):
+            if i == 1:
+                continue
+            counts, bin_edges = np.histogram(result, bins=max(entries, 128))
+            cdf = np.cumsum(counts)
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+
+        step = float(len(means)) / 5.0
+        yticks = [int(round(step * i)) for i in range(6)]
+
+        ax.set_yticks(yticks)
+
+        upper = 3
+
+        plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
@@ -223,7 +256,8 @@ PLOT = { 'violin': violin,
          'violin_order_lattice': violin_order_lattice,
          'slowdown_cdf': slowdown_cdf,
          'slowdown_to_racket': slowdown_to_racket,
-         'stats_table': stats_table}
+         'stats_table': stats_table,
+         'slowdown_cdf_small': slowdown_cdf_small}
 
 def main(args):
 
