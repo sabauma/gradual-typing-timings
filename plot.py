@@ -140,6 +140,7 @@ def slowdown_cdf_hidden(args, datas):
         upper = float(args[0])
     else:
         upper = 5
+    L = 0
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number, data in enumerate(datas):
