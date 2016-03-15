@@ -137,7 +137,7 @@ def slowdown_cdf_small(args, datas):
 def slowdown_cdf_hidden(args, datas):
 
     if args:
-        upper = float(args[0])
+        upper = int(args[0])
     else:
         upper = 5
     L = 0
