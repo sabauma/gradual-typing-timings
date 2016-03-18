@@ -84,21 +84,18 @@ def slowdown_cdf(args, datas):
             if i == 1:
                 continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
+            counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
         step = float(len(means)) / 5.0
-        yticks = [int(round(step * i)) for i in range(6)]
-
-        ax.set_yticks(yticks)
-
         upper = 10
 
         plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
-        plt.ylim((0, entries))
+        plt.ylim((0, 100))
 
 def slowdown_cdf_small(args, datas):
     L = int(args[0]) if args else 0
@@ -148,7 +145,8 @@ def slowdown_cdf_hidden(args, datas):
         slowdowns = means / means[0,:]
         graph = lnm.fromkeyvals(data.names, slowdowns)
         graph = lnm.compute_lnm_times(graph, L)
-        print slowdowns
+
+        print np.sum(slowdowns < 3.0, axis=0)
 
         results = graph.ungraph()[1]
         results = zip(*results)
@@ -158,20 +156,15 @@ def slowdown_cdf_hidden(args, datas):
             if i == 0:
                 continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
+            counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
-
-        step = float(len(means)) / 5.0
-        yticks = [int(round(step * i)) for i in range(6)]
-
-        ax.set_yticks(yticks)
-
 
         plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
-        plt.ylim((0, entries))
+        plt.ylim((0, 100))
 
 def violin(args, data):
     means = data.means
