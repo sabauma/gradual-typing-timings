@@ -75,6 +75,7 @@ def slowdown_cdf(args, datas):
         slowdowns = means / means[0,:]
         graph = lnm.fromkeyvals(data.names, slowdowns)
         graph = lnm.compute_lnm_times(graph, L)
+        print slowdowns
 
         results = graph.ungraph()[1]
         results = zip(*results)
@@ -115,6 +116,7 @@ def slowdown_cdf_small(args, datas):
             if i == 1:
                 continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
+            counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
@@ -129,7 +131,7 @@ def slowdown_cdf_small(args, datas):
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
-        plt.ylim((0, entries))
+        plt.ylim((0, 100))
 
 def slowdown_cdf_hidden(args, datas):
 
@@ -155,10 +157,15 @@ def slowdown_cdf_hidden(args, datas):
         for i, result in enumerate(results):
             if i == 0:
                 continue
+            median = np.median(result)
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+            width = 0.01 * (upper - 1)
+            height = 2.0
+            circle = mpatches.Ellipse((median, 50.0), width=width, height=height, color=COLORS[i], alpha=0.8)
+            fig.gca().add_artist(circle)
 
         plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
