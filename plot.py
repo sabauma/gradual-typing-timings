@@ -75,7 +75,6 @@ def slowdown_cdf(args, datas):
         slowdowns = means / means[0,:]
         graph = lnm.fromkeyvals(data.names, slowdowns)
         graph = lnm.compute_lnm_times(graph, L)
-        print slowdowns
 
         results = graph.ungraph()[1]
         results = zip(*results)
