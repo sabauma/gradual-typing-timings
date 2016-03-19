@@ -119,11 +119,6 @@ def slowdown_cdf_small(args, datas):
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        step = float(len(means)) / 5.0
-        yticks = [int(round(step * i)) for i in range(6)]
-
-        ax.set_yticks(yticks)
-
         upper = 3
 
         plt.axvline(3, color=COLORS[-1])
