@@ -156,10 +156,6 @@ def slowdown_cdf_hidden(args, datas):
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
-            width = 0.01 * (upper - 1)
-            height = 2.0
-            circle = mpatches.Ellipse((median, 50.0), width=width, height=height, color=COLORS[i], alpha=0.8)
-            fig.gca().add_artist(circle)
 
         plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
