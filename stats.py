@@ -3,10 +3,6 @@ import lnm
 import numpy as np
 import matplotlib.pyplot as plt
 
-from scipy.stats import cumfreq
-from pandas      import DataFrame
-from ipy_table   import *
-
 def read_raw_data(fname):
     variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
     times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
@@ -30,6 +26,7 @@ def compute_deliverable(data):
     return [max(data), np.mean(data), np.median(data), "%d (%0.2f%%)" % (th, th / float(len(data)) * 100), "%d (%0.2f%%)" % (oh, oh / float(len(data)) * 100)]
 
 def make_deliverable_table(**kwargs):
+    from ipy_table   import *
     lst = [["", "Max overhead", "Mean overhead", "Median overhead", "300-deliverable", "300/1000-usable"]]
     for name, data in kwargs.iteritems():
         lst.append([name] + compute_deliverable(data))
