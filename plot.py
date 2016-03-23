@@ -163,6 +163,37 @@ def slowdown_cdf_hidden(args, datas):
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
         plt.ylim((0, 100))
 
+def slowdown_cdf_big(args, datas):
+    L = int(args[0]) if args else 0
+
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+    for number, data in enumerate(datas):
+        means = data.means
+        slowdowns = means / means[0,:]
+        graph = lnm.fromkeyvals(data.names, slowdowns)
+        graph = lnm.compute_lnm_times(graph, L)
+
+        results = graph.ungraph()[1]
+        results = zip(*results)
+        entries = means.shape[0]
+
+        for i, result in enumerate(results):
+            if i == 1:
+                continue
+            counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
+            counts = counts * (100.0 / float(entries))
+            cdf = np.cumsum(counts)
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+
+        step = float(len(means)) / 5.0
+        upper = 50
+
+        plt.axvline(3, color=COLORS[-1])
+        plt.xlim((1,upper))
+        ax.set_xticks(range(1, upper + 1))
+        ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+        plt.ylim((0, 100))
+
 def violin(args, data):
     means = data.means
     vars  = data.variances
@@ -287,7 +318,8 @@ PLOT = { 'violin': violin,
          'slowdown_to_racket': slowdown_to_racket,
          'stats_table': stats_table,
          'slowdown_cdf_small': slowdown_cdf_small,
-         'slowdown_cdf_hidden': slowdown_cdf_hidden }
+         'slowdown_cdf_hidden': slowdown_cdf_hidden,
+         'slowdown_cdf_big': slowdown_cdf_big }
 
 def main(args):
 
