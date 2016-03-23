@@ -185,13 +185,12 @@ def slowdown_cdf_big(args, datas):
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        step = float(len(means)) / 5.0
         upper = 50
 
         plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
-        ax.set_xticks(range(1, upper + 1))
-        ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+        ax.set_xticks([1] + range(5, upper + 1, 5))
+        ax.set_xticklabels(["1x"] + ["%dx" % i for i in range(5, upper + 1, 5)])
         plt.ylim((0, 100))
 
 def violin(args, data):
