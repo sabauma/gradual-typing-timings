@@ -20,10 +20,11 @@ mpl.rc('figure', autolayout=True)
 
 Data = namedtuple('Data', 'names times means variances')
 
-COLORS = [(255 / 255.0, 69 / 255.0, 0 / 255.0), (34 / 255.0, 139 / 255.0, 34 / 255.0), (36 / 255.0, 36 / 255.0, 140 / 255.0), (218 / 255.0, 165 / 255.0, 32 / 255.0)]
+COLORS = [(255 / 255.0, 90 / 255.0, 20 / 255.0), (34 / 255.0, 139 / 255.0, 34 / 255.0), (36 / 255.0, 36 / 255.0, 140 / 255.0), (218 / 255.0, 165 / 255.0, 32 / 255.0)]
 LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
-SUFFIXES = ['Racket 6.4.0.8', 'Racket 6.2.1']
+# MARKERS = ['s', 'o', 'o']
+SUFFIXES = ['Racket 6.4.0.14', 'Racket 6.2.1']
 
 def print_help():
     pass
@@ -61,8 +62,8 @@ def slowdown_cdf(datas):
                 continue
             result = all_data[:,i]
             counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
-            cdf = np.cumsum(counts)
-            ax.plot(bin_edges[:-1], cdf / float(entries) * 100.0, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+            cdf = np.cumsum(counts) / float(entries) * 100.0
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
         avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
         avg_slowdown_unweighted = np.mean(all_data, axis=0)
