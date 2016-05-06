@@ -1,28 +1,15 @@
 
 import re
 import numpy as np
-from graph import Graph
+from graph import Graph, immutable_array
 
-def memoize(func):
-    cache = {}
-    def wrapper(*args):
-        lup = cache.get(args, None)
-        if lup is not None:
-            return lup
-        result = func(*args)
-        cache[args] = result
-        return result
-    wrapper.__name__ = func.__name__
-    return wrapper
-
-@memoize
-def adjacent_variations(variation):
+def adjacent_variations(var):
     """ Given a variation represented as a bit string, return all variations
         one step above in the lattice """
-    var = np.array(list(variation), dtype='b')
+    idx = (var == 0).view(np.ndarray)
     I = np.identity(len(var), dtype='b')
-    swaps = I[var == 0,:]
-    return tuple((''.join([str(j) for j in var + swaps[i,:]]) for i in range(swaps.shape[0])))
+    data = var + I[idx,:]
+    return data
 
 class LNM(object):
     def __init__(self, graph):
@@ -45,11 +32,12 @@ def sanitize(variations):
     result = []
     for var in variations:
         clean = re.sub("[^01]", "", var)
-        result.append(clean)
+        result.append(immutable_array(map(int, clean), dtype='b'))
     return result
 
 def fromkeyvals_transpose(keys, *args):
-    return Graph.fromkeyvals(keys, np.array(zip(*args)), adjacent_variations)
+    args = immutable_array(zip(*args))
+    return Graph.fromkeyvals(keys, args, adjacent_variations)
 
 def fromkeyvals(keys, args):
     return Graph.fromkeyvals(keys, args, adjacent_variations)

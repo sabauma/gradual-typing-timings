@@ -1,6 +1,22 @@
 
 import numpy as np
 
+def immutable_array(data, *args, **kwargs):
+    array = np.array(data, *args, **kwargs)
+    return array.view(immutable_ndarray)
+
+class immutable_ndarray(np.ndarray):
+
+    def __array_finalize__(self, obj):
+        self.setflags(write=False)
+
+    def __nonzero__(self):
+        """ This is necessarry to use immutable_ndarray as dict keys. Kinda gross """
+        return all(self)
+
+    def __hash__(self):
+        return hash(self.data)
+
 class Node(object):
     __slots__ = ('name', 'adjacent', 'payload')
     def __init__(self, name, adjacent, payload):
@@ -53,7 +69,7 @@ class Graph(object):
     def ungraph(self):
         graph = self.graph
         keys = sorted(graph.keys())
-        return (keys, np.array([graph[key].payload for key in keys]))
+        return (keys, immutable_array([graph[key].payload for key in keys]))
 
     def networkx_graph(self):
         import networkx as nx
@@ -85,8 +101,8 @@ class Graph(object):
 
 ex = {'00': 1, '11': 2, '01': 3, '10': 4}
 
-if __name__ == '__main__':
-    import networkx as nx
-    g = Graph.fromdict(ex)
-    print nx.draw(g.display())
+# if __name__ == '__main__':
+    # import networkx as nx
+    # g = Graph.fromdict(ex)
+    # print nx.draw(g.display())
 

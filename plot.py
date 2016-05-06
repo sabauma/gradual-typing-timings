@@ -32,17 +32,21 @@ parser.add_argument('--args', nargs=argparse.REMAINDER)
 def print_help():
     pass
 
+def validate_keys(keys):
+    init = keys[0]
+    for i in keys:
+        for l, r in zip(init, i):
+            assert all(l == r)
+    return keys
+
 def read_data_files(pattern):
     files = glob.glob(pattern)
-    # print "processing {} file(s)".format(len(files))
 
     if not files:
         raise ValueError("cannot find any matching files: " % pattern)
 
     keys, times = zip(*[stats.read_raw_data(fname) for fname in files])
-    for i in keys:
-        if keys[0] != i:
-            raise ValueError("inconsistent data files")
+    validate_keys(keys)
 
     means     = np.mean(times, axis=0)
     variances = np.var(times, axis=0)
