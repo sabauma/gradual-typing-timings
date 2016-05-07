@@ -61,13 +61,6 @@ class Graph(object):
             newnode.adjacent = [newgraph(n.name) for n in node.adjacent]
         return Graph(newgraph.memo_table)
 
-    def get_cached_node(self, nodeid):
-        node = self.graph.get(nodeid, None)
-        if node is None:
-            node = Node(nodeid, None, None)
-            self.graph[nodeid] = node
-        return node
-
     def within_distance(self, node, distance):
         return self.graph[node].within_distance(distance)
 
@@ -114,17 +107,9 @@ class Graph(object):
         return Graph(memo.memo_table)
 
     @staticmethod
-    def fromiter(it):
-        return Graph(it)
-
-    @staticmethod
     def fromkeyvals(keys, vals, adjacent):
         from itertools import izip
         return Graph.fromfunc(izip(keys, vals), adjacent)
-
-    @staticmethod
-    def fromdict(dict):
-        return Graph(dict.iteritems())
 
 ex = {'00': 1, '11': 2, '01': 3, '10': 4}
 
