@@ -59,7 +59,7 @@ class Graph(object):
             newnode = newgraph(key)
             newnode.payload = func(node)
             newnode.adjacent = [newgraph(n.name) for n in node.adjacent]
-        return Graph(newgraph.memo_table)
+        return Graph(newgraph.memo_table())
 
     def within_distance(self, node, distance):
         return self.graph[node].within_distance(distance)
@@ -94,7 +94,8 @@ class Graph(object):
                 node = Node(key, None, None)
                 graph[key] = node
             return node
-        func.memo_table = graph
+        func.graph = graph
+        func.memo_table = lambda: func.graph.copy()
         return func
 
     @staticmethod
@@ -104,7 +105,7 @@ class Graph(object):
             node = memo(k)
             node.payload  = v
             node.adjacent = map(memo, adjacent(k))
-        return Graph(memo.memo_table)
+        return Graph(memo.memo_table())
 
     @staticmethod
     def fromkeyvals(keys, vals, adjacent):
