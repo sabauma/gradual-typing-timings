@@ -49,12 +49,17 @@ class NodeCounter(object):
         return nid
 
 class Graph(object):
-    def __init__(self, keyvals, adjacent):
-        self.graph = {}
-        for k, v in keyvals:
-            node = self.get_cached_node(k)
-            node.payload = v
-            node.adjacent = map(self.get_cached_node, adjacent(k))
+
+    def __init__(self, graph):
+        self.graph = graph
+
+    def traverse(self, func):
+        newgraph = Graph.memo_nodes()
+        for key, node in self.graph.iteritems():
+            newnode = newgraph(key)
+            newnode.payload = func(node)
+            newnode.adjacent = [newgraph(n.name) for n in node.adjacent]
+        return Graph(newgraph.memo_table)
 
     def get_cached_node(self, nodeid):
         node = self.graph.get(nodeid, None)
@@ -87,13 +92,35 @@ class Graph(object):
         return self.graph.iterkeys()
 
     @staticmethod
+    def memo_nodes(graph=None):
+        if graph is None:
+            graph = {}
+        def func(key):
+            node = graph.get(key, None)
+            if node is None:
+                node = Node(key, None, None)
+                graph[key] = node
+            return node
+        func.memo_table = graph
+        return func
+
+    @staticmethod
+    def fromfunc(keyvals, adjacent):
+        memo = Graph.memo_nodes()
+        for k, v in keyvals:
+            node = memo(k)
+            node.payload  = v
+            node.adjacent = map(memo, adjacent(k))
+        return Graph(memo.memo_table)
+
+    @staticmethod
     def fromiter(it):
         return Graph(it)
 
     @staticmethod
     def fromkeyvals(keys, vals, adjacent):
         from itertools import izip
-        return Graph(izip(keys, vals), adjacent)
+        return Graph.fromfunc(izip(keys, vals), adjacent)
 
     @staticmethod
     def fromdict(dict):

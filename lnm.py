@@ -11,22 +11,11 @@ def adjacent_variations(var):
     data = var + I[idx,:]
     return data
 
-class LNM(object):
-    def __init__(self, graph):
-        self.graph = graph
-
-    def _compute_lnm_time(self, variation, L):
-        graph = self.graph
-        reachable = (p.payload for p in graph.within_distance(variation, L))
-        return reduce(np.minimum, reachable)
-
-    def compute_lnm_graph(self, L):
-        graph = self.graph
-        res = ((key, self._compute_lnm_time(key, L)) for key in graph.iterkeys())
-        return Graph(res, adjacent_variations)
-
 def compute_lnm_times(graph, L=0):
-    return LNM(graph).compute_lnm_graph(L)
+    def reachable(node):
+        for n in node.within_distance(L):
+            yield n.payload
+    return graph.traverse(lambda n: reduce(np.minimum, reachable(n)))
 
 def sanitize(variations):
     result = []
