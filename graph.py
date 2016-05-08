@@ -27,11 +27,11 @@ class Node(object):
     def within_distance(self, distance):
         todo = {self}
         for _ in xrange(distance):
-            todo = todo.union((neighbor for node in todo for neighbor in node.adjacent))
+            todo = todo.union(neighbor for node in todo for neighbor in node.adjacent)
         return list(todo)
 
     def __str__(self):
-        return self.name
+        return repr(self)
 
     def __repr__(self):
         return "Node(%r, %r, %r)" % (self.name, self.adjacent, self.payload)
