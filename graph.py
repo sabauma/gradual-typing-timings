@@ -85,17 +85,17 @@ class Graph(object):
         return self.graph.iterkeys()
 
     @staticmethod
-    def memo_nodes(graph=None):
-        if graph is None:
-            graph = {}
+    def memo_nodes(storage=None):
+        if storage is None:
+            storage = {}
         def func(key):
-            node = graph.get(key, None)
+            node = storage.get(key, None)
             if node is None:
                 node = Node(key, None, None)
-                graph[key] = node
+                storage[key] = node
             return node
-        func.graph = graph
-        func.memo_table = lambda: func.graph.copy()
+        func.storage = storage
+        func.memo_table = lambda: storage.copy()
         return func
 
     @staticmethod
