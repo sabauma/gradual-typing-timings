@@ -1,5 +1,6 @@
 
 import numpy as np
+from collections import OrderedDict
 
 def immutable_array(data, *args, **kwargs):
     array = np.array(data, *args, **kwargs)
@@ -51,6 +52,7 @@ class NodeCounter(object):
 class Graph(object):
 
     def __init__(self, graph):
+        assert isinstance(graph, OrderedDict)
         self.graph = graph
 
     def traverse(self, func):
@@ -65,8 +67,11 @@ class Graph(object):
         return self.graph[node].within_distance(distance)
 
     def ungraph(self):
+        """
+        Produce the new data set in the order given by the initial input data.
+        """
         graph = self.graph
-        keys = sorted(graph.keys())
+        keys  = graph.keys()
         return (keys, immutable_array([graph[key].payload for key in keys]))
 
     def networkx_graph(self):
@@ -87,7 +92,7 @@ class Graph(object):
     @staticmethod
     def memo_nodes(storage=None):
         if storage is None:
-            storage = {}
+            storage = OrderedDict()
         def func(key):
             node = storage.get(key, None)
             if node is None:
