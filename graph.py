@@ -90,9 +90,8 @@ class Graph(object):
         return self.graph.iterkeys()
 
     @staticmethod
-    def memo_nodes(storage=None):
-        if storage is None:
-            storage = OrderedDict()
+    def memo_nodes():
+        storage = OrderedDict()
         def func(key):
             node = storage.get(key, None)
             if node is None:
