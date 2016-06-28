@@ -19,7 +19,9 @@ class immutable_ndarray(np.ndarray):
         return hash(self.data)
 
 class Node(object):
+
     __slots__ = ('name', 'adjacent', 'payload')
+
     def __init__(self, name, adjacent, payload):
         self.name     = name
         self.adjacent = adjacent
