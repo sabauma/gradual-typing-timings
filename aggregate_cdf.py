@@ -102,7 +102,7 @@ def slowdown_cdf(datas):
 
         max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
 
-        perfect = np.arange(0.0, max, 0.01)
+        perfect = np.arange(0.0, max, 0.001)[1:]
         ax.plot(perfect, 1.0 / perfect, color=COLORS[-1])
 
         ax.set_xticks(range(0, 10, 1) + range(10, max + 10, 10))
