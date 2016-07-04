@@ -1,0 +1,4 @@
+configuration00 13118 7905 7952 
+configuration01 972187 81751 54912 
+configuration10 1446575 105068 92361 
+configuration11 9780 9322 9314 

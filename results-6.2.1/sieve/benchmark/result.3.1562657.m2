@@ -1,0 +1,4 @@
+configuration00 13118 7899 8160 
+configuration01 1131689 81400 54056 
+configuration10 1436213 106586 82065 
+configuration11 9784 9595 9297 
