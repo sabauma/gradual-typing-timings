@@ -78,14 +78,18 @@ def slowdown_cdf(datas):
         avg_slowdown_weighted  = np.dot(weights, all_data) / float(entries)
         avg_slowdown_weighted1 = np.dot(weights, all_data1) / float(entries)
         if number != 0:
-            print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
+            print "\multicolumn{7}{c}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
         for i in range(len(avg_slowdown_weighted)):
             if i == 1:
                 continue
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_weighted1[i], 1)
-            print "%s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), s1, s2)
+            s3 = np.sum(all_data < 3.0, axis=0)[i] * 100.0  / float(all_data.shape[0])
+            s4 = np.sum(all_data1 < 3.0, axis=0)[i] * 100.0 / float(all_data.shape[0])
+            s5 = np.sum(all_data < 1.1, axis=0)[i] * 100.0  / float(all_data.shape[0])
+            s6 = np.sum(all_data1 < 1.1, axis=0)[i] * 100.0 / float(all_data.shape[0])
+            print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.1f$ & $%0.1f$ & $%0.1f$ & $%0.1f$ \\\\" % (LABELS[i].capitalize(), s1, s2, s3, s4, s5, s6)
         print "\\hline"
 
     plt.axvline(3, color=COLORS[-1])
