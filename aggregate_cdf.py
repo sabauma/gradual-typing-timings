@@ -88,6 +88,9 @@ def slowdown_cdf(datas):
         s6 = np.dot(weights, all_data1 < 1.1) * 100.0 / float(np.sum(weights))
         s7 = np.dot(weights, all_data2 < 1.1) * 100.0 / float(np.sum(weights))
 
+        def rnd(x):
+            return round(x, 0)
+
         if number != 0:
             print "\multicolumn{8}{c}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
@@ -96,7 +99,7 @@ def slowdown_cdf(datas):
                 continue
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_weighted1[i], 1)
-            print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.1f$ & $%0.1f$ & $%0.1f$ & $%0.1f$ & $%0.1f$ \\\\" % (LABELS[i].capitalize(), s1, s2, s3[i], s4[i], s5[i], s6[i], s7[i])
+            print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ \\\\" % ((LABELS[i].capitalize(), s1, s2) + tuple(map(rnd, (s3[i], s4[i], s5[i], s6[i], s7[i]))))
         print "\\hline"
 
     plt.axvline(3, color=COLORS[-1])
