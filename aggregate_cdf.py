@@ -94,7 +94,7 @@ def slowdown_cdf(datas):
         if number != 0:
             print "\multicolumn{8}{c}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
-        for i in range(len(avg_slowdown_weighted)):
+        for i in reversed(range(len(avg_slowdown_weighted))):
             if i == 1:
                 continue
             s1 = round(avg_slowdown_weighted[i], 1)
