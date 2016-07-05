@@ -19,8 +19,8 @@ mpl.rc('font', family='Arial', size=22)
 
 Data = namedtuple('Data', 'names times means variances')
 
-COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0), (255.0 / 255.0, 69.0 / 255.0, 0.0 / 255.0), (36.0 / 255.0, 36.0 / 255.0, 140.0 / 255.0), (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)]
 GREEN  = (34.0 / 255.0, 139.0 / 255.0, 24.0 / 255.0)
+COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0), GREEN, (36.0 / 255.0, 36.0 / 255.0, 140.0 / 255.0), (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)]
 LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
 
@@ -86,8 +86,8 @@ def slowdown_cdf(args, datas):
         entries = means.shape[0]
 
         for i, result in enumerate(results):
-            if i == 1:
-                continue
+            # if i == 1:
+                # continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)

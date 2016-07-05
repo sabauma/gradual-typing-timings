@@ -24,7 +24,7 @@ COLORS = [(255.0 / 255.0, 90 / 255.0, 20 / 255.0), (34 / 255.0, 139 / 255.0, 34 
 LABELS = ['racket', 'baseline', 'pycket']
 LINESTYLES = ['-', '--', ':']
 # MARKERS = ['s', 'o', 'o']
-SUFFIXES = ['Racket 6.4.0.14', 'Racket 6.2.1']
+SUFFIXES = ['Racket 6.5.0.6', 'Racket 6.2.1']
 
 def print_help():
     pass
@@ -45,12 +45,16 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
-def slowdown_cdf(datas):
+def slowdown_cdf(datas, L=0):
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number, data in enumerate(datas):
         weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
         slowdowns = [d.means / d.means[0,:] for d in data]
+
+        graphs = [lnm.fromkeyvals(d.names, slowdown) for d, slowdown in zip(data, slowdowns)]
+        graphs = [lnm.compute_lnm_times(g, L) for g in graphs]
+        slowdowns = [g.ungraph()[1] for g in graphs]
 
         weights  = reduce(np.append, weights)
         all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
@@ -67,9 +71,8 @@ def slowdown_cdf(datas):
 
         avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
         avg_slowdown_unweighted = np.mean(all_data, axis=0)
-        if number != 0:
-            print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
-            print "\\hline"
+        print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
+        print "\\hline"
         for i in range(len(avg_slowdown_weighted)):
             if i == 1:
                 continue
