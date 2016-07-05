@@ -56,9 +56,14 @@ def slowdown_cdf(datas):
         graphs = [lnm.compute_lnm_times(g, L=1) for g in graphs]
         slowdowns1 = [g.ungraph()[1] for g in graphs]
 
+        graphs = [lnm.fromkeyvals(d.names, slowdown) for d, slowdown in zip(data, slowdowns)]
+        graphs = [lnm.compute_lnm_times(g, L=2) for g in graphs]
+        slowdowns2 = [g.ungraph()[1] for g in graphs]
+
         weights   = reduce(np.append, weights)
         all_data  = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
         all_data1 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns1)
+        all_data2 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns2)
 
         entries = len(data)
         N = all_data.shape[-1]
@@ -81,6 +86,8 @@ def slowdown_cdf(datas):
         s4 = np.dot(weights, all_data1 < 3.0) * 100.0 / float(np.sum(weights))
         s5 = np.dot(weights, all_data < 1.1) * 100.0  / float(np.sum(weights))
         s6 = np.dot(weights, all_data1 < 1.1) * 100.0 / float(np.sum(weights))
+        s7 = np.dot(weights, all_data2 < 1.1) * 100.0 / float(np.sum(weights))
+
         if number != 0:
             print "\multicolumn{7}{c}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
@@ -89,7 +96,7 @@ def slowdown_cdf(datas):
                 continue
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_weighted1[i], 1)
-            print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.1f$ & $%0.1f$ & $%0.1f$ & $%0.1f$ \\\\" % (LABELS[i].capitalize(), s1, s2, s3[i], s4[i], s5[i], s6[i])
+            print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.1f$ & $%0.1f$ & $%0.1f$ & $%0.1f$ & $%0.1f$ \\\\" % (LABELS[i].capitalize(), s1, s2, s3[i], s4[i], s5[i], s6[i], s7[i])
         print "\\hline"
 
     plt.axvline(3, color=COLORS[-1])
