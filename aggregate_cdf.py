@@ -89,7 +89,7 @@ def slowdown_cdf(datas):
         s7 = np.dot(weights, all_data2 < 1.1) * 100.0 / float(np.sum(weights))
 
         if number != 0:
-            print "\multicolumn{7}{c}{%s} \\\\" % SUFFIXES[number]
+            print "\multicolumn{8}{c}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
         for i in range(len(avg_slowdown_weighted)):
             if i == 1:
