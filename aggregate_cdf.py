@@ -63,7 +63,12 @@ def slowdown_cdf(datas):
         entries = len(data)
         N = all_data.shape[-1]
         for i in range(N):
-            if i == 1:
+            if number == 0 and i == 2:
+                result = all_data1[:,i]
+                counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
+                cdf = np.cumsum(counts) / float(entries) * 100.0
+                ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=(0,0,0))
+            elif i == 1:
                 continue
             result = all_data[:,i]
             counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
