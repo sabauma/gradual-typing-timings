@@ -45,7 +45,7 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
-def slowdown_cdf(datas, L=0):
+def slowdown_cdf(datas):
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number, data in enumerate(datas):
@@ -53,11 +53,12 @@ def slowdown_cdf(datas, L=0):
         slowdowns = [d.means / d.means[0,:] for d in data]
 
         graphs = [lnm.fromkeyvals(d.names, slowdown) for d, slowdown in zip(data, slowdowns)]
-        graphs = [lnm.compute_lnm_times(g, L) for g in graphs]
-        slowdowns = [g.ungraph()[1] for g in graphs]
+        graphs = [lnm.compute_lnm_times(g, L=1) for g in graphs]
+        slowdowns1 = [g.ungraph()[1] for g in graphs]
 
-        weights  = reduce(np.append, weights)
-        all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
+        weights   = reduce(np.append, weights)
+        all_data  = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
+        all_data1 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns1)
 
         entries = len(data)
         N = all_data.shape[-1]
@@ -69,8 +70,8 @@ def slowdown_cdf(datas, L=0):
             cdf = np.cumsum(counts) / float(entries) * 100.0
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        avg_slowdown_weighted = np.dot(weights, all_data) / float(entries)
-        avg_slowdown_unweighted = np.mean(all_data, axis=0)
+        avg_slowdown_weighted  = np.dot(weights, all_data) / float(entries)
+        avg_slowdown_weighted1 = np.dot(weights, all_data1) / float(entries)
         if number != 0:
             print "\multicolumn{3}{c}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
@@ -78,7 +79,7 @@ def slowdown_cdf(datas, L=0):
             if i == 1:
                 continue
             s1 = round(avg_slowdown_weighted[i], 1)
-            s2 = round(avg_slowdown_unweighted[i], 1)
+            s2 = round(avg_slowdown_weighted1[i], 1)
             print "%s & $%0.1f\\times$ & $%0.1f\\times$ \\\\" % (LABELS[i].capitalize(), s1, s2)
         print "\\hline"
 
