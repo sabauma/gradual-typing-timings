@@ -129,8 +129,12 @@ def slowdown_cdf(datas):
         perfect = np.arange(0.0, max, 0.001)[1:]
         ax.plot(perfect, 1.0 / perfect, color=COLORS[-1])
 
-        ax.set_xticks(range(0, 10, 1) + range(10, max + 10, 10))
-        ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max + 10, 10))
+        if max > 100:
+            skip = 20
+        else:
+            skip = 10
+        ax.set_xticks(range(0, 10, 1) + range(10, max + 10, skip))
+        ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max + 10, skip))
         ax.axhline(1.0, color=COLORS[0])
         plt.ylim((0, 2))
         plt.xlim((0, max))
