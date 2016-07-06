@@ -196,7 +196,6 @@ def slowdown_cdf_big(args, datas):
 
         upper = 50
 
-        plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
         ax.set_xticks([1] + range(5, upper + 1, 5))
         ax.set_xticklabels(["1x"] + ["%dx" % i for i in range(5, upper + 1, 5)])
