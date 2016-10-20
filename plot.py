@@ -86,8 +86,8 @@ def slowdown_cdf(args, datas):
         entries = means.shape[0]
 
         for i, result in enumerate(results):
-            if i == 1:
-                continue
+            # if i == 1:
+                # continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
