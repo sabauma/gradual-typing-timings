@@ -4,10 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def read_raw_data(fname):
-    variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
-    times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
-    keys = lnm.sanitize(variations)
-    return keys, times
+    try:
+        variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
+        times = np.genfromtxt(fname, usecols=(1,2,3,4), dtype='d')
+    except ValueError:
+        print "failed on: ", fname
+    else:
+        keys = lnm.sanitize(variations)
+        return keys, times
 
 def make_slowdown_data(fname):
     data = np.genfromtxt(fname, usecols=(1,2,3))
@@ -26,12 +30,13 @@ def compute_deliverable(data):
     return [max(data), np.mean(data), np.median(data), "%d (%0.2f%%)" % (th, th / float(len(data)) * 100), "%d (%0.2f%%)" % (oh, oh / float(len(data)) * 100)]
 
 def make_deliverable_table(**kwargs):
-    from ipy_table   import *
+    # from ipy_table   import *
+    import ipy_table
     lst = [["", "Max overhead", "Mean overhead", "Median overhead", "300-deliverable", "300/1000-usable"]]
     for name, data in kwargs.iteritems():
         lst.append([name] + compute_deliverable(data))
-    tbl = make_table(map(list, zip(*lst)))
-    apply_theme('basic_both')
+    tbl = ipy_table.make_table(map(list, zip(*lst)))
+    ipy_table.apply_theme('basic_both')
     return tbl
 
 def slowdown_cdf(*args, **kwargs):
