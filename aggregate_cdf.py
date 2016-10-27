@@ -21,7 +21,7 @@ mpl.rc('figure', autolayout=True)
 Data = namedtuple('Data', 'names times means variances')
 
 COLORS = [(255.0 / 255.0, 90 / 255.0, 20 / 255.0), (34 / 255.0, 139 / 255.0, 34 / 255.0), (36 / 255.0, 36 / 255.0, 140 / 255.0), (218 / 255.0, 165 / 255.0, 32 / 255.0)]
-LABELS = ['racket', 'baseline', 'pycket']
+LABELS = ['racket', 'pycket', 'baseline', 'no-callgraph']
 LINESTYLES = ['-', '--', ':']
 # MARKERS = ['s', 'o', 'o']
 SUFFIXES = ['Racket 6.5.0.6', 'Racket 6.2.1']
@@ -73,8 +73,8 @@ def slowdown_cdf(datas):
                 counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
                 cdf = np.cumsum(counts) / float(entries) * 100.0
                 ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=(0,0,0))
-            elif i == 1:
-                continue
+            # elif i == 1:
+                # continue
             result = all_data[:,i]
             counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
             cdf = np.cumsum(counts) / float(entries) * 100.0
@@ -95,8 +95,8 @@ def slowdown_cdf(datas):
             print "\multicolumn{8}{|c|}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
         for i in reversed(range(len(avg_slowdown_weighted))):
-            if i == 1:
-                continue
+            # if i == 1:
+                # continue
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_weighted1[i], 1)
             print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ \\\\" % ((LABELS[i].capitalize(), s1, s2) + tuple(map(rnd, (s3[i], s4[i], s5[i], s6[i], s7[i]))))
@@ -120,7 +120,7 @@ def slowdown_cdf(datas):
         all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
 
         all_racket = reduce(np.append, [d.means[:,0] for d in data])
-        for i in range(2, N):
+        for i in range(1, N):
             ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
 
