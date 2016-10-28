@@ -89,19 +89,19 @@ def slowdown_cdf(datas):
         all_data1 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns1)
         all_data2 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns2)
 
-        entries = len(data)
         N = all_data.shape[-1]
         for i in range(N):
+            entries = np.sum(weights[:,i])
             if number == 0 and i == 2:
                 result = all_data1[:,i]
                 counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
-                cdf = np.cumsum(counts) / float(entries) * 100.0
+                cdf = np.cumsum(counts) / entries * 100.0
                 ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=(0,0,0))
             # elif i == 1:
                 # continue
             result = all_data[:,i]
             counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
-            cdf = np.cumsum(counts) / float(entries) * 100.0
+            cdf = np.cumsum(counts) / np.sum(entries) * 100.0
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
         # import pdb; pdb.set_trace()
