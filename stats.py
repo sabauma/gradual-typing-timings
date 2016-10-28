@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 def read_raw_data(fname):
     try:
         variations = np.genfromtxt(fname, usecols=(0,), dtype=None)
-        times = np.genfromtxt(fname, usecols=(1,2,3,4), dtype='d')
+        with open(fname, 'r') as infile:
+            columns = (" ".join(line.split()[1:]) for line in infile)
+            times   = np.genfromtxt(columns, dtype='d')
     except ValueError:
         print "failed on: ", fname
     else:
