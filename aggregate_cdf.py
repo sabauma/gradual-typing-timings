@@ -45,6 +45,24 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
+def pad_weights(weights, arrs):
+    needed = max(*[s.shape[-1] for s in arrs])
+    new_arrs, new_weights = [], []
+
+    for weight, arr in zip(weights, arrs):
+        have = arr.shape[-1]
+        need = needed - have
+        pad  = np.ones((arr.shape[0], need)) * -1
+        arr  = np.append(arr, pad, axis=1)
+        new_arrs.append(arr)
+
+        weight = np.repeat([weight], have, axis=0).T
+        pad = np.zeros((arr.shape[0], need))
+        weight = np.append(weight, pad, axis=1)
+        new_weights.append(weight)
+
+    return new_weights, new_arrs
+
 def slowdown_cdf(datas):
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -60,7 +78,13 @@ def slowdown_cdf(datas):
         graphs = [lnm.compute_lnm_times(g, L=2) for g in graphs]
         slowdowns2 = [g.ungraph()[1] for g in graphs]
 
-        weights   = reduce(np.append, weights)
+        largest_dims = max(*[s.shape[-1] for s in slowdowns])
+
+        _, slowdowns = pad_weights(weights, slowdowns)
+        _, slowdowns1 = pad_weights(weights, slowdowns1)
+        weights, slowdowns2 = pad_weights(weights, slowdowns2)
+
+        weights   = reduce(lambda a, b: np.append(a, b, axis=0), weights)
         all_data  = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
         all_data1 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns1)
         all_data2 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns2)
@@ -70,23 +94,27 @@ def slowdown_cdf(datas):
         for i in range(N):
             if number == 0 and i == 2:
                 result = all_data1[:,i]
-                counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
+                counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
                 cdf = np.cumsum(counts) / float(entries) * 100.0
                 ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=(0,0,0))
             # elif i == 1:
                 # continue
             result = all_data[:,i]
-            counts, bin_edges = np.histogram(result, bins=len(result), weights=weights)
+            counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
             cdf = np.cumsum(counts) / float(entries) * 100.0
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        avg_slowdown_weighted  = np.dot(weights, all_data) / float(entries)
-        avg_slowdown_weighted1 = np.dot(weights, all_data1) / float(entries)
-        s3 = np.dot(weights, all_data < 3.0) * 100.0  / float(np.sum(weights))
-        s4 = np.dot(weights, all_data1 < 3.0) * 100.0 / float(np.sum(weights))
-        s5 = np.dot(weights, all_data < 1.1) * 100.0  / float(np.sum(weights))
-        s6 = np.dot(weights, all_data1 < 1.1) * 100.0 / float(np.sum(weights))
-        s7 = np.dot(weights, all_data2 < 1.1) * 100.0 / float(np.sum(weights))
+        # import pdb; pdb.set_trace()
+        # avg_slowdown_weighted  = np.dot(weights, all_data) / float(entries)
+        # avg_slowdown_weighted1 = np.dot(weights, all_data1) / float(entries)
+        total_benchmarks = np.sum(weights, axis=0)
+        avg_slowdown_weighted  = np.sum(weights * all_data, axis=0)  / total_benchmarks
+        avg_slowdown_weighted1 = np.sum(weights * all_data1, axis=0) / total_benchmarks
+        s3 = np.sum(weights * (all_data < 3.0)  , axis=0) * 100.0  / total_benchmarks
+        s4 = np.sum(weights * (all_data1 < 3.0) , axis=0) * 100.0  / total_benchmarks
+        s5 = np.sum(weights * (all_data < 1.1)  , axis=0) * 100.0  / total_benchmarks
+        s6 = np.sum(weights * (all_data1 < 1.1) , axis=0) * 100.0  / total_benchmarks
+        s7 = np.sum(weights * (all_data2 < 1.1) , axis=0) * 100.0  / total_benchmarks
 
         def rnd(x):
             return round(x, 0)
@@ -94,9 +122,7 @@ def slowdown_cdf(datas):
         if number != 0:
             print "\multicolumn{8}{|c|}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
-        for i in reversed(range(len(avg_slowdown_weighted))):
-            # if i == 1:
-                # continue
+        for i in range(len(avg_slowdown_weighted)):
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_weighted1[i], 1)
             print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ \\\\" % ((LABELS[i].capitalize(), s1, s2) + tuple(map(rnd, (s3[i], s4[i], s5[i], s6[i], s7[i]))))
@@ -116,28 +142,28 @@ def slowdown_cdf(datas):
         weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
         slowdowns = [d.means / d.means[0,:] for d in data]
 
-        weights  = reduce(np.append, weights)
+        weights, slowdowns = pad_weights(weights, slowdowns)
+        weights  = reduce(lambda a, b: np.append(a, b, axis=0), weights)
         all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
 
-        all_racket = reduce(np.append, [d.means[:,0] for d in data])
-        for i in range(1, N):
+        for i in range(1, 2):
             ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
 
-        max = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
+        max_width = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
 
-        perfect = np.arange(0.0, max, 0.001)[1:]
+        perfect = np.arange(0.0, max_width, 0.001)[1:]
         ax.plot(perfect, 1.0 / perfect, color=COLORS[-1])
 
-        if max > 100:
+        if max_width > 100:
             skip = 20
         else:
             skip = 10
-        ax.set_xticks(range(0, 10, 1) + range(10, max + 10, skip))
-        ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max + 10, skip))
+        ax.set_xticks(range(0, 10, 1) + range(10, max_width + 10, skip))
+        ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max_width + 10, skip))
         ax.axhline(1.0, color=COLORS[0])
         plt.ylim((0, 2))
-        plt.xlim((0, max))
+        plt.xlim((0, max_width))
         ax.legend(loc='best')
         ax.set_xlabel("Racket gradual typing overhead")
         ax.set_ylabel("Runtime relative to Racket")
