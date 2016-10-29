@@ -67,8 +67,12 @@ def stats_table(args, datas):
     ratio = slowdowns[-1,:]
     acceptable = np.sum(slowdowns < 3.0, axis=0) / float(N) * 100.0
 
+    stats = np.array([ratio, max, mean, acceptable])
+
+    rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % tuple(stats[:,i]) for i in [0, 1]]
+
     print "%d &" % N,
-    print " & ".join(["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % (ratio[i], max[i], mean[i], acceptable[i]) for i in [0, 1]]),
+    print " & ".join(rows),
     print "\\\\"
 
 def slowdown_cdf(args, datas):
