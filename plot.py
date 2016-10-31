@@ -203,11 +203,7 @@ def slowdown_cdf_hidden(args, datas):
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
-            if i == 1:
-                color = GREEN
-            else:
-                color = COLORS[i]
-            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=color)
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
         plt.axvline(3, color=COLORS[-1])
         plt.xlim((1,upper))
