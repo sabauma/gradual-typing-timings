@@ -175,10 +175,9 @@ def slowdown_cdf_small(args, datas):
         plt.ylim((0, 100))
 
 def slowdown_cdf_hidden(args, datas):
-    args = args.args
 
-    if args:
-        upper = int(args[0])
+    if args.args:
+        upper = int(args.args[0])
     else:
         upper = 5
     L = 0
@@ -197,7 +196,7 @@ def slowdown_cdf_hidden(args, datas):
         entries = means.shape[0]
 
         for i, result in enumerate(results):
-            if i == 0:
+            if args.systems is not None and i not in args.systems:
                 continue
             median = np.median(result)
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
