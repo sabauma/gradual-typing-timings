@@ -97,16 +97,11 @@ def slowdown_cdf(datas):
                 counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
                 cdf = np.cumsum(counts) / entries * 100.0
                 ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=(0,0,0))
-            # elif i == 1:
-                # continue
             result = all_data[:,i]
             counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
             cdf = np.cumsum(counts) / np.sum(entries) * 100.0
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        # import pdb; pdb.set_trace()
-        # avg_slowdown_weighted  = np.dot(weights, all_data) / float(entries)
-        # avg_slowdown_weighted1 = np.dot(weights, all_data1) / float(entries)
         total_benchmarks = np.sum(weights, axis=0)
         avg_slowdown_weighted  = np.sum(weights * all_data, axis=0)  / total_benchmarks
         avg_slowdown_weighted1 = np.sum(weights * all_data1, axis=0) / total_benchmarks

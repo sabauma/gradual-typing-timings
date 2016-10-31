@@ -75,7 +75,41 @@ def stats_table(args, datas):
     print " & ".join(rows),
     print "\\\\"
 
+
 def slowdown_cdf(args, datas):
+    if not args:
+        LS = [0]
+    else:
+        LS = [int(arg) for arg in args]
+
+    assert len(datas) == 1
+    data, = datas
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+    for number in LS:
+        means = data.means
+        slowdowns = means / means[0,:]
+        graph = lnm.fromkeyvals(data.names, slowdowns)
+        graph = lnm.compute_lnm_times(graph, number)
+
+        results = graph.ungraph()[1]
+        results = zip(*results)
+        entries = means.shape[0]
+
+        for i, result in enumerate(results):
+            counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
+            counts = counts * (100.0 / float(entries))
+            cdf = np.cumsum(counts)
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+
+    step = float(len(means)) / 5.0
+    upper = 10
+    plt.axvline(3, color=COLORS[-1])
+    plt.xlim((1,upper))
+    ax.set_xticks(range(1, upper + 1))
+    ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+    plt.ylim((0, 100))
+
+def slowdown_cdf_old(args, datas):
     L = int(args[0]) if args else 0
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -90,21 +124,18 @@ def slowdown_cdf(args, datas):
         entries = means.shape[0]
 
         for i, result in enumerate(results):
-            # if i == 1:
-                # continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        step = float(len(means)) / 5.0
-        upper = 10
-
-        plt.axvline(3, color=COLORS[-1])
-        plt.xlim((1,upper))
-        ax.set_xticks(range(1, upper + 1))
-        ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
-        plt.ylim((0, 100))
+    step = float(len(means)) / 5.0
+    upper = 10
+    plt.axvline(3, color=COLORS[-1])
+    plt.xlim((1,upper))
+    ax.set_xticks(range(1, upper + 1))
+    ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+    plt.ylim((0, 100))
 
 def slowdown_cdf_small(args, datas):
     L = int(args[0]) if args else 0
@@ -333,7 +364,6 @@ PLOT = { 'violin': violin,
          'slowdown_cdf_big': slowdown_cdf_big }
 
 def main(args):
-
     plot_type   = args.action
     input_files = args.data
 
