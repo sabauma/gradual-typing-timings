@@ -20,7 +20,7 @@ mpl.rc('font', family='Arial', size=22)
 Data = namedtuple('Data', 'names times means variances')
 
 GREEN  = (34.0 / 255.0, 139.0 / 255.0, 24.0 / 255.0)
-COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0), GREEN, (36.0 / 255.0, 36.0 / 255.0, 140.0 / 255.0), (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)]
+COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0), (36.0 / 255.0, 36.0 / 255.0, 140.0 / 255.0), GREEN, (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)]
 LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph']
 LINESTYLES = ['-', '--', ':']
 
@@ -28,7 +28,8 @@ parser = argparse.ArgumentParser(description="Plot some things")
 parser.add_argument('action', help="what plot to generate")
 parser.add_argument('data', nargs='+', help="data files to process", type=str)
 parser.add_argument('--output', default=None, nargs=1, type=str)
-parser.add_argument('--args', nargs=argparse.REMAINDER)
+parser.add_argument('--args', nargs='+', default=None, type=str)
+parser.add_argument('--systems', nargs='+', default=None, type=int)
 
 def print_help():
     pass
@@ -77,10 +78,11 @@ def stats_table(args, datas):
 
 
 def slowdown_cdf(args, datas):
-    if not args:
+
+    if not args.args:
         LS = [0]
     else:
-        LS = [int(arg) for arg in args]
+        LS = [int(arg) for arg in args.args]
 
     assert len(datas) == 1
     data, = datas
@@ -96,6 +98,9 @@ def slowdown_cdf(args, datas):
         entries = means.shape[0]
 
         for i, result in enumerate(results):
+            if args.systems is not None:
+                if i not in args.systems:
+                    continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
@@ -110,6 +115,7 @@ def slowdown_cdf(args, datas):
     plt.ylim((0, 100))
 
 def slowdown_cdf_old(args, datas):
+    args = args.args
     L = int(args[0]) if args else 0
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -138,6 +144,7 @@ def slowdown_cdf_old(args, datas):
     plt.ylim((0, 100))
 
 def slowdown_cdf_small(args, datas):
+    args = args.args
     L = int(args[0]) if args else 0
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -168,6 +175,7 @@ def slowdown_cdf_small(args, datas):
         plt.ylim((0, 100))
 
 def slowdown_cdf_hidden(args, datas):
+    args = args.args
 
     if args:
         upper = int(args[0])
@@ -208,6 +216,7 @@ def slowdown_cdf_hidden(args, datas):
         plt.ylim((0, 100))
 
 def slowdown_cdf_big(args, datas):
+    args = args.args
     L = int(args[0]) if args else 0
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -237,6 +246,7 @@ def slowdown_cdf_big(args, datas):
         plt.ylim((0, 100))
 
 def violin(args, data):
+    args = args.args
     means = data.means
     vars  = data.variances
 
@@ -264,6 +274,7 @@ def violin(args, data):
         tick.label.set_fontsize(5)
 
 def violin_order_runtime(args, data):
+    args = args.args
     times = data.times
     names = data.names
     means = data.means
@@ -375,7 +386,7 @@ def main(args):
         raise ValueError('invalid plot type "{}"'.format(plot_type))
 
     data = map(read_data_files, input_files)
-    plot(args.args, data)
+    plot(args, data)
 
     if output is not None and output[0] == "show":
         plt.show()
