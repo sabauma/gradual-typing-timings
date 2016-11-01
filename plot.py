@@ -78,11 +78,10 @@ def stats_table(args, datas):
 
 
 def slowdown_cdf(args, datas):
-
     if not args.args:
         LS = [0]
     else:
-        LS = [int(arg) for arg in args.args]
+        LS = map(int, args.args)
 
     assert len(datas) == 1
     data, = datas
