@@ -43,6 +43,7 @@ def plot(f):
         return result
 
     PLOTS[f.__name__] = wrapper
+    wrapper.func = f
     return wrapper
 
 def print_help():
@@ -428,5 +429,6 @@ def main(args):
     return data
 
 if __name__ == '__main__':
-    data = main(parser.parse_args())
+    if len(sys.argv) > 1:
+        data = main(parser.parse_args())
 
