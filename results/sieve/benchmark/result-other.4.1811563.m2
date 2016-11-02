@@ -1,0 +1,4 @@
+configuration00 9197 9323 9227 
+configuration01 38551 63762 38101 
+configuration10 30200 30294 30021 
+configuration11 10043 9884 9926 

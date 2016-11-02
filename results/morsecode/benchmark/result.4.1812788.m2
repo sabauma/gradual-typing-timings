@@ -1,0 +1,16 @@
+configuration0000 366 292 287 352 
+configuration0001 592 276 295 364 
+configuration0010 518 287 287 309 
+configuration0011 324 279 293 383 
+configuration0100 469 279 293 346 
+configuration0101 678 293 294 334 
+configuration0110 530 288 294 327 
+configuration0111 321 280 284 329 
+configuration1000 426 320 319 454 
+configuration1001 678 317 314 514 
+configuration1010 602 318 311 525 
+configuration1011 379 318 318 449 
+configuration1100 508 314 314 471 
+configuration1101 712 312 321 550 
+configuration1110 546 316 308 511 
+configuration1111 343 322 318 463 

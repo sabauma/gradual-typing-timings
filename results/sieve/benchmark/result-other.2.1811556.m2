@@ -1,0 +1,4 @@
+configuration00 9047 9042 8997 
+configuration01 38203 63692 37798 
+configuration10 32321 30510 29400 
+configuration11 9888 9905 9827 
