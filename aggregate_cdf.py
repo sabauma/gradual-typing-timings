@@ -143,7 +143,7 @@ def slowdown_cdf(datas):
         all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
 
         for i in range(1, 2):
-            ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i+1], label=LABELS[i])
+            ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
 
         max_width = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
