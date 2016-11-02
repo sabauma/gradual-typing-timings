@@ -145,7 +145,6 @@ def slowdown_cdf(datas):
         for i in range(1, 2):
             ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
 
-
         max_width = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
 
         perfect = np.arange(0.0, max_width, 0.001)[1:]
