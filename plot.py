@@ -54,6 +54,30 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
+def aggregate(args, datas):
+    all_data = np.hstack([d.means for d in datas])
+    output = args.output[0]
+
+    if output is None or output == "show":
+        outfile = sys.stdout
+    else:
+        outfile = open(output, 'w')
+
+    if args.systems is None:
+        systems = np.array(range(all_data.shape[-1]))
+    else:
+        systems = np.array(args.systems)
+
+    for name, row in zip(datas[0].names, all_data):
+        bit_string = "".join(map(str, name))
+        entry_name = "configuration{}".format(bit_string)
+        result = " ".join([entry_name] + map(str, row[systems]))
+        outfile.write(result)
+        outfile.write("\n")
+
+    if outfile is not sys.stdout:
+        outfile.close()
+
 def slowdown_stats(slowdowns):
     pass
 
@@ -70,12 +94,11 @@ def stats_table(args, datas):
 
     stats = np.array([ratio, max, mean, acceptable])
 
-    rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % tuple(stats[:,i]) for i in [0, 1]]
+    rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $\n" % tuple(stats[:,i]) for i in [0, 1, 2]]
 
-    print "%d &" % N,
-    print " & ".join(rows),
+    print "%d &" % N
+    print "".join(rows),
     print "\\\\"
-
 
 def slowdown_cdf(args, datas):
     if not args.args:
@@ -366,7 +389,8 @@ PLOT = { 'violin': violin,
          'stats_table': stats_table,
          'slowdown_cdf_small': slowdown_cdf_small,
          'slowdown_cdf_hidden': slowdown_cdf_hidden,
-         'slowdown_cdf_big': slowdown_cdf_big }
+         'slowdown_cdf_big': slowdown_cdf_big,
+         'aggregate': aggregate }
 
 def main(args):
     plot_type   = args.action
