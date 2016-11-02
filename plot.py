@@ -94,7 +94,7 @@ def stats_table(args, datas):
 
     stats = np.array([ratio, max, mean, acceptable])
 
-    rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % tuple(stats[:,i]) for i in [0, 1, 2]]
+    rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % tuple(stats[:,i]) for i in [0, 1]]
 
     print "%d &" % N,
     print " & ".join(rows),
