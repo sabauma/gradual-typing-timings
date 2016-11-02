@@ -35,8 +35,15 @@ PLOTS = {}
 
 def plot(f):
     assert f.__name__ not in PLOTS
+    def wrapper(*args, **kwargs):
+        result = f(*args, **kwargs)
+        if result is None:
+            return True
+        assert isinstance(result, bool)
+        return result
+
     PLOTS[f.__name__] = f
-    return f
+    return wrapper
 
 def print_help():
     pass
@@ -85,6 +92,8 @@ def aggregate(args, datas):
 
     if outfile is not sys.stdout:
         outfile.close()
+
+    return False
 
 def slowdown_stats(slowdowns):
     pass
@@ -411,12 +420,13 @@ def main(args):
         raise ValueError('invalid plot type "{}"'.format(plot_type))
 
     data = map(read_data_files, input_files)
-    plot(args, data)
+    needs_plot = plot(args, data)
 
-    if output is not None and output[0] == "show":
-        plt.show()
-    elif output is not None:
-        plt.savefig(output[0], dpi=500)
+    if needs_plot:
+        if output is not None and output[0] == "show":
+            plt.show()
+        elif output is not None:
+            plt.savefig(output[0], dpi=500)
 
     return data
 
