@@ -42,7 +42,7 @@ def plot(f):
         assert isinstance(result, bool)
         return result
 
-    PLOTS[f.__name__] = f
+    PLOTS[f.__name__] = wrapper
     return wrapper
 
 def print_help():
@@ -71,12 +71,12 @@ def read_data_files(pattern):
 @plot
 def aggregate(args, datas):
     all_data = np.hstack([d.means for d in datas])
-    output = args.output[0]
+    output = args.output
 
-    if output is None or output == "show":
+    if not output or output[0] == "show":
         outfile = sys.stdout
     else:
-        outfile = open(output, 'w')
+        outfile = open(output[0], 'w')
 
     if args.systems is None:
         systems = np.array(range(all_data.shape[-1]))
@@ -94,9 +94,6 @@ def aggregate(args, datas):
         outfile.close()
 
     return False
-
-def slowdown_stats(slowdowns):
-    pass
 
 @plot
 def stats_table(args, datas):
