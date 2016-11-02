@@ -418,7 +418,6 @@ def main(args):
     elif output is not None:
         plt.savefig(output[0], dpi=500)
 
-    # graph = lnm.fromkeyvals(data.names, data.means)
     return data
 
 if __name__ == '__main__':
