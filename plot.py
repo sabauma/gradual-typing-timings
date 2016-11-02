@@ -31,6 +31,13 @@ parser.add_argument('--output', default=None, nargs=1, type=str)
 parser.add_argument('--args', nargs='+', default=None, type=str)
 parser.add_argument('--systems', nargs='+', default=None, type=int)
 
+PLOTS = {}
+
+def plot(f):
+    assert f.__name__ not in PLOTS
+    PLOTS[f.__name__] = f
+    return f
+
 def print_help():
     pass
 
@@ -54,6 +61,7 @@ def read_data_files(pattern):
     variances = np.var(times, axis=0)
     return Data(keys[0], np.array(times), means, variances)
 
+@plot
 def aggregate(args, datas):
     all_data = np.hstack([d.means for d in datas])
     output = args.output[0]
@@ -81,6 +89,7 @@ def aggregate(args, datas):
 def slowdown_stats(slowdowns):
     pass
 
+@plot
 def stats_table(args, datas):
     data = datas[0]
 
@@ -100,6 +109,7 @@ def stats_table(args, datas):
     print " & ".join(rows),
     print "\\\\"
 
+@plot
 def slowdown_cdf(args, datas):
     if not args.args:
         LS = [0]
@@ -136,6 +146,7 @@ def slowdown_cdf(args, datas):
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
     plt.ylim((0, 100))
 
+@plot
 def slowdown_cdf_old(args, datas):
     args = args.args
     L = int(args[0]) if args else 0
@@ -165,6 +176,7 @@ def slowdown_cdf_old(args, datas):
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
     plt.ylim((0, 100))
 
+@plot
 def slowdown_cdf_small(args, datas):
     args = args.args
     L = int(args[0]) if args else 0
@@ -196,6 +208,7 @@ def slowdown_cdf_small(args, datas):
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
         plt.ylim((0, 100))
 
+@plot
 def slowdown_cdf_hidden(args, datas):
 
     if args.args:
@@ -232,6 +245,7 @@ def slowdown_cdf_hidden(args, datas):
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
         plt.ylim((0, 100))
 
+@plot
 def slowdown_cdf_big(args, datas):
     args = args.args
     L = int(args[0]) if args else 0
@@ -262,6 +276,7 @@ def slowdown_cdf_big(args, datas):
         ax.set_xticklabels(["1x"] + ["%dx" % i for i in range(5, upper + 1, 5)])
         plt.ylim((0, 100))
 
+@plot
 def violin(args, data):
     args = args.args
     means = data.means
@@ -290,6 +305,7 @@ def violin(args, data):
     for tick in ax.xaxis.get_major_ticks():
         tick.label.set_fontsize(5)
 
+@plot
 def violin_order_runtime(args, data):
     args = args.args
     times = data.times
@@ -329,6 +345,7 @@ def violin_order_runtime(args, data):
 def popcnt(arg):
     return sum(c == '1' for c in arg[1])
 
+@plot
 def violin_order_lattice(args, data):
     names = data.names
     times = data.times
@@ -363,6 +380,7 @@ def violin_order_lattice(args, data):
     for tick in ax.xaxis.get_major_ticks():
         tick.label.set_fontsize(8)
 
+@plot
 def slowdown_to_racket(args, data):
     names = data.names
     times = data.times
@@ -381,17 +399,6 @@ def slowdown_to_racket(args, data):
     ax.set_xlabel("racket runtime")
     ax.set_ylabel("pycket relative runtime")
 
-PLOT = { 'violin': violin,
-         'violin_order_runtime': violin_order_runtime,
-         'violin_order_lattice': violin_order_lattice,
-         'slowdown_cdf': slowdown_cdf,
-         'slowdown_to_racket': slowdown_to_racket,
-         'stats_table': stats_table,
-         'slowdown_cdf_small': slowdown_cdf_small,
-         'slowdown_cdf_hidden': slowdown_cdf_hidden,
-         'slowdown_cdf_big': slowdown_cdf_big,
-         'aggregate': aggregate }
-
 def main(args):
     plot_type   = args.action
     input_files = args.data
@@ -399,7 +406,7 @@ def main(args):
     output = args.output
 
     try:
-        plot = PLOT[plot_type]
+        plot = PLOTS[plot_type]
     except KeyError:
         raise ValueError('invalid plot type "{}"'.format(plot_type))
 
