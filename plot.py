@@ -21,8 +21,14 @@ mpl.rc('font', family='Arial', size=22)
 Data = namedtuple('Data', 'names times means variances')
 
 GREEN  = (34.0 / 255.0, 139.0 / 255.0, 24.0 / 255.0)
-COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0), (36.0 / 255.0, 36.0 / 255.0, 140.0 / 255.0), GREEN, (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)]
-LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph']
+COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0),
+          (36.0 / 255.0, 36.0 / 255.0, 140.0 / 255.0),
+          GREEN,
+          (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0),
+          (0.0, 0.0, 0.0)
+          ]
+
+LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph', 'no-force-virtual-state', 'no-unroll', 'no-impersonator-loop']
 LINESTYLES = ['-', '--', ':']
 
 parser = argparse.ArgumentParser(description="Plot some things")
@@ -161,43 +167,44 @@ def mean_slowdown(args, datas):
 
 @plot
 def slowdown_cdf(args, datas):
+    assert datas
     if not args.args:
         LS = [0]
     else:
         LS = map(int, args.args)
 
-    norm = args.norm and args.norm[0]
+    names = datas[0].names
+    data = np.hstack([d.means for d in datas])
+    systems = args.systems
+    if systems is not None:
+        data = data[:,systems]
 
-    assert len(datas) == 1
-    data, = datas
+    norm = args.norm and args.norm[0]
+    if norm is None or norm == -1:
+        norm = range(data.shape[-1])
+    else:
+        assert norm >= 0
+
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number in LS:
-        means = data.means
-        if norm is None or norm == -1:
-            norm = range(means.shape[-1])
-        else:
-            assert norm >= 0
 
-        slowdowns = means / means[0,norm]
-        graph = lnm.fromkeyvals(data.names, slowdowns)
+        slowdowns = data / data[0,norm]
+        graph = lnm.fromkeyvals(names, slowdowns)
         graph = lnm.compute_lnm_times(graph, number)
 
         results = graph.ungraph()[1]
         results = zip(*results)
-        entries = means.shape[0]
+        entries = data.shape[0]
 
         for i, result in enumerate(results):
-            if args.systems is not None:
-                if i not in args.systems:
-                    continue
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-    step = float(len(means)) / 5.0
+    step = float(len(data)) / 5.0
     upper = 10
-    plt.axvline(3, color=COLORS[-1])
+    plt.axvline(3, color=COLORS[3])
     plt.xlim((1,upper))
     ax.set_xticks(range(1, upper + 1))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
