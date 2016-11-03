@@ -118,6 +118,38 @@ def stats_table(args, datas):
     print "\\\\"
 
 @plot
+def mean_slowdown(args, datas):
+    all_data = np.hstack([d.means for d in datas])
+    systems = args.systems
+    if systems is not None:
+        all_data = all_data[:,systems]
+
+    norm = args.norm and args.norm[0]
+    if norm is None or norm == -1:
+        norm = range(all_data.shape[-1])
+    else:
+        assert norm >= 0
+    slowdowns = all_data / all_data[0,norm]
+    slowdowns = np.mean(slowdowns, axis=0)
+
+    output = args.output
+    if not output or output[0] == "show":
+        outfile = sys.stdout
+    else:
+        outfile = open(output[0], 'w')
+
+    data = " ".join(map(str, slowdowns))
+    outfile.write(data)
+
+    if outfile is not sys.stdout:
+        outfile.close()
+    else:
+        outfile.write("\n")
+
+    return False
+
+
+@plot
 def slowdown_cdf(args, datas):
     if not args.args:
         LS = [0]
