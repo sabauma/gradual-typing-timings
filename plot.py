@@ -148,7 +148,7 @@ def mean_slowdown(args, datas):
 
     systems = args.systems
     if systems is not None:
-        slowdown = slowdown[:,systems]
+        slowdowns = slowdowns[:,systems]
 
     slowdowns = np.mean(slowdowns, axis=0)
     output = args.output
