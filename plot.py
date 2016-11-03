@@ -30,6 +30,7 @@ parser.add_argument('data', nargs='+', help="data files to process", type=str)
 parser.add_argument('--output', default=None, nargs=1, type=str)
 parser.add_argument('--args', nargs='+', default=None, type=str)
 parser.add_argument('--systems', nargs='+', default=None, type=int)
+parser.add_argument('--norm', nargs=1, default=None, type=int)
 
 PLOTS = {}
 
@@ -123,12 +124,19 @@ def slowdown_cdf(args, datas):
     else:
         LS = map(int, args.args)
 
+    norm = args.norm and args.norm[0]
+
     assert len(datas) == 1
     data, = datas
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number in LS:
         means = data.means
-        slowdowns = means / means[0,:]
+        if norm is None or norm == -1:
+            norm = range(means.shape[-1])
+        else:
+            assert norm >= 0
+
+        slowdowns = means / means[0,norm]
         graph = lnm.fromkeyvals(data.names, slowdowns)
         graph = lnm.compute_lnm_times(graph, number)
 
