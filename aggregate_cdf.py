@@ -85,10 +85,10 @@ def slowdown_cdf(datas):
         _, slowdowns1 = pad_weights(weights, slowdowns1)
         weights, slowdowns2 = pad_weights(weights, slowdowns2)
 
-        weights   = reduce(lambda a, b: np.append(a, b, axis=0), weights)
-        all_data  = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
-        all_data1 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns1)
-        all_data2 = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns2)
+        weights   = np.vstack(weights)
+        all_data  = np.vstack(slowdowns)
+        all_data1 = np.vstack(slowdowns1)
+        all_data2 = np.vstack(slowdowns2)
 
         N = all_data.shape[-1]
         for i in range(N):
@@ -121,7 +121,7 @@ def slowdown_cdf(datas):
         for i in range(len(avg_slowdown_weighted)):
             s1 = round(avg_slowdown_weighted[i], 1)
             s2 = round(avg_slowdown_weighted1[i], 1)
-            print "%s & $%0.1f\\times$ & $%0.1f\\times$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ \\\\" % ((LABELS[i].capitalize(), s1, s2) + tuple(map(rnd, (s3[i], s4[i], s5[i], s6[i], s7[i]))))
+            print "%s & $%0.2f\\times$ & $%0.2f\\times$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ \\\\" % ((LABELS[i].capitalize(), s1, s2) + tuple(map(rnd, (s3[i], s4[i], s5[i], s6[i], s7[i]))))
         print "\\hline"
 
     plt.axvline(3, color=COLORS[-1])

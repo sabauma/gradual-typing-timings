@@ -138,9 +138,6 @@ def stats_table(args, datas):
 @plot
 def mean_slowdown(args, datas):
     all_data = np.hstack([d.means for d in datas])
-    systems = args.systems
-    if systems is not None:
-        all_data = all_data[:,systems]
 
     norm = args.norm and args.norm[0]
     if norm is None or norm == -1:
@@ -148,8 +145,12 @@ def mean_slowdown(args, datas):
     else:
         assert norm >= 0
     slowdowns = all_data / all_data[0,norm]
-    slowdowns = np.mean(slowdowns, axis=0)
 
+    systems = args.systems
+    if systems is not None:
+        slowdown = slowdown[:,systems]
+
+    slowdowns = np.mean(slowdowns, axis=0)
     output = args.output
     if not output or output[0] == "show":
         output = None
@@ -164,6 +165,44 @@ def mean_slowdown(args, datas):
 
     return False
 
+
+def pad_weights(weights, arrs):
+    needed = max(*[s.shape[-1] for s in arrs])
+    new_arrs, new_weights = [], []
+
+    for weight, arr in zip(weights, arrs):
+        have = arr.shape[-1]
+        need = needed - have
+        pad  = np.ones((arr.shape[0], need)) * -1
+        arr  = np.append(arr, pad, axis=1)
+        new_arrs.append(arr)
+
+        weight = np.repeat([weight], have, axis=0).T
+        pad = np.zeros((arr.shape[0], need))
+        weight = np.append(weight, pad, axis=1)
+        new_weights.append(weight)
+
+    return new_weights, new_arrs
+
+@plot
+def aggregate_slowdown(args, datas):
+    means   = [d.means for d in datas]
+    weights = [np.ones(mean.shape[0]) / float(mean.shape[0]) for mean in means]
+
+    norm = args.norm and args.norm[0]
+    if norm is None or norm == -1:
+        norm = Ellipsis
+    else:
+        assert norm >= 0
+    slowdown = [m / m[0,norm] for m in means]
+
+    weights, slowdown = pad_weights(weights, slowdown)
+
+    slowdown = np.vstack(slowdown)
+    weights  = np.vstack(weights)
+
+    slowdown = np.sum(slowdown * weights, axis=0) / np.sum(weights, axis=0)
+    import pdb; pdb.set_trace()
 
 @plot
 def slowdown_cdf(args, datas):
