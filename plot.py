@@ -12,6 +12,7 @@ import operator as op
 import os
 import stats
 import sys
+import contextlib
 
 import matplotlib as mpl
 mpl.rc('lines', linewidth=3, color='r')
@@ -33,6 +34,19 @@ parser.add_argument('--systems', nargs='+', default=None, type=int)
 parser.add_argument('--norm', nargs=1, default=None, type=int)
 
 PLOTS = {}
+
+@contextlib.contextmanager
+def smart_open(filename=None):
+    if filename and filename != '-':
+        fh = open(filename, 'w')
+    else:
+        fh = sys.stdout
+
+    try:
+        yield fh
+    finally:
+        if fh is not sys.stdout:
+            fh.close()
 
 def plot(f):
     assert f.__name__ not in PLOTS
@@ -76,24 +90,22 @@ def aggregate(args, datas):
     output = args.output
 
     if not output or output[0] == "show":
-        outfile = sys.stdout
+        output = None
     else:
-        outfile = open(output[0], 'w')
+        output = output[0]
 
     if args.systems is None:
         systems = np.array(range(all_data.shape[-1]))
     else:
         systems = np.array(args.systems)
 
-    for name, row in zip(datas[0].names, all_data):
-        bit_string = "".join(map(str, name))
-        entry_name = "configuration{}".format(bit_string)
-        result = " ".join([entry_name] + map(str, row[systems]))
-        outfile.write(result)
-        outfile.write("\n")
-
-    if outfile is not sys.stdout:
-        outfile.close()
+    with smart_open(output) as outfile:
+        for name, row in zip(datas[0].names, all_data):
+            bit_string = "".join(map(str, name))
+            entry_name = "configuration{}".format(bit_string)
+            result = " ".join([entry_name] + map(str, row[systems]))
+            outfile.write(result)
+            outfile.write("\n")
 
     return False
 
@@ -134,17 +146,15 @@ def mean_slowdown(args, datas):
 
     output = args.output
     if not output or output[0] == "show":
-        outfile = sys.stdout
+        output = None
     else:
-        outfile = open(output[0], 'w')
+        output = output[0]
 
-    data = " ".join(map(str, slowdowns))
-    outfile.write(data)
-
-    if outfile is not sys.stdout:
-        outfile.close()
-    else:
-        outfile.write("\n")
+    with smart_open(output) as outfile:
+        data = " ".join(map(str, slowdowns))
+        outfile.write(data)
+        if output is None:
+            outfile.write("\n")
 
     return False
 
