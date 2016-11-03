@@ -119,8 +119,8 @@ def slowdown_cdf(datas):
             print "\multicolumn{8}{|c|}{%s} \\\\" % SUFFIXES[number]
             print "\\hline"
         for i in range(len(avg_slowdown_weighted)):
-            s1 = round(avg_slowdown_weighted[i], 1)
-            s2 = round(avg_slowdown_weighted1[i], 1)
+            s1 = round(avg_slowdown_weighted[i], 2)
+            s2 = round(avg_slowdown_weighted1[i], 2)
             print "%s & $%0.2f\\times$ & $%0.2f\\times$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ & $%0.0f$ \\\\" % ((LABELS[i].capitalize(), s1, s2) + tuple(map(rnd, (s3[i], s4[i], s5[i], s6[i], s7[i]))))
         print "\\hline"
 
