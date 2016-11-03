@@ -165,7 +165,6 @@ def mean_slowdown(args, datas):
 
     return False
 
-
 def pad_weights(weights, arrs):
     needed = max(*[s.shape[-1] for s in arrs])
     new_arrs, new_weights = [], []
@@ -202,7 +201,18 @@ def aggregate_slowdown(args, datas):
     weights  = np.vstack(weights)
 
     slowdown = np.sum(slowdown * weights, axis=0) / np.sum(weights, axis=0)
-    import pdb; pdb.set_trace()
+    output = args.output
+    if not output or output[0] == "show":
+        output = None
+    else:
+        output = output[0]
+
+    with smart_open(output) as outfile:
+        data = " ".join(map(str, slowdown))
+        outfile.write(data)
+        if output is None:
+            outfile.write("\n")
+    return False
 
 @plot
 def slowdown_cdf(args, datas):
