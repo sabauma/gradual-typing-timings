@@ -231,21 +231,22 @@ def slowdown_cdf(args, datas):
 
     names = datas[0].names
     data = np.hstack([d.means for d in datas])
-    systems = args.systems
-    if systems is not None:
-        data = data[:,systems]
 
     norm = args.norm and args.norm[0]
     if norm is None or norm == -1:
         norm = range(data.shape[-1])
     else:
         assert norm >= 0
+    slowdowns = data / data[0,norm]
+
+    systems = args.systems
+    if systems is not None:
+        slowdowns = slowdowns[:,systems]
 
     colors = colors_array(args)
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number in LS:
 
-        slowdowns = data / data[0,norm]
         graph = lnm.fromkeyvals(names, slowdowns)
         graph = lnm.compute_lnm_times(graph, number)
 
