@@ -91,17 +91,18 @@ def slowdown_cdf(datas):
         all_data2 = np.vstack(slowdowns2)
 
         N = all_data.shape[-1]
-        for i in range(3):
+        for i in range(2):
             entries = np.sum(weights[:,i])
-            if number == 0 and i == 2:
-                result = all_data1[:,i]
-                counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
-                cdf = np.cumsum(counts) / entries * 100.0
-                ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=(0,0,0))
             result = all_data[:,i]
             counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,i])
             cdf = np.cumsum(counts) / np.sum(entries) * 100.0
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+
+        # add lines for L=1
+        result = all_data1[:,i]
+        counts, bin_edges = np.histogram(result, bins=len(result), weights=weights[:,1])
+        cdf = np.cumsum(counts) / entries * 100.0
+        ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=(0,0,0))
 
         total_benchmarks = np.sum(weights, axis=0)
         avg_slowdown_weighted  = np.sum(weights * all_data, axis=0)  / total_benchmarks
