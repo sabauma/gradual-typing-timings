@@ -122,6 +122,7 @@ def stats_table(args, datas):
     data = datas[0]
 
     slowdowns = data.means / data.means[0,:]
+    untyped_untyped = data.means[0,1] / data.means[0,0]
 
     N = slowdowns.shape[0]
     max = np.max(slowdowns, axis=0)
@@ -133,8 +134,9 @@ def stats_table(args, datas):
 
     rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % tuple(stats[:,i]) for i in [0, 1]]
 
-    print "%d &" % N,
+    # print "%d &" % N,
     print " & ".join(rows),
+    print " & %0.2f" % untyped_untyped,
     print "\\\\"
 
 @plot
