@@ -91,7 +91,7 @@ def slowdown_cdf(datas):
         all_data2 = np.vstack(slowdowns2)
 
         N = all_data.shape[-1]
-        for i in range(N):
+        for i in range(2):
             entries = np.sum(weights[:,i])
             if number == 0 and i == 2:
                 result = all_data1[:,i]
