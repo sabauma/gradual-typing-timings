@@ -38,6 +38,7 @@ parser.add_argument('--output', default=None, nargs=1, type=str)
 parser.add_argument('--args', nargs='+', default=None, type=str)
 parser.add_argument('--systems', nargs='+', default=None, type=int)
 parser.add_argument('--norm', nargs=1, default=None, type=int)
+parser.add_argument('--abscolor', action="store_true")
 
 PLOTS = {}
 
@@ -214,6 +215,12 @@ def aggregate_slowdown(args, datas):
             outfile.write("\n")
     return False
 
+def colors_array(args):
+    if not args.abscolor or args.systems is None:
+        return COLORS
+    colors = [COLORS[i] for i in args.systems]
+    return colors
+
 @plot
 def slowdown_cdf(args, datas):
     assert datas
@@ -234,6 +241,7 @@ def slowdown_cdf(args, datas):
     else:
         assert norm >= 0
 
+    colors = colors_array(args)
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number in LS:
 
@@ -249,7 +257,7 @@ def slowdown_cdf(args, datas):
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
-            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=colors[i])
 
     step = float(len(data)) / 5.0
     upper = 10
