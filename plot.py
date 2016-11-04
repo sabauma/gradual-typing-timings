@@ -30,6 +30,7 @@ COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0),
 
 LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph', 'no-force-virtual-state', 'no-unroll', 'no-impersonator-loop']
 LINESTYLES = ['-', '--', ':']
+VLINE = (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0),
 
 parser = argparse.ArgumentParser(description="Plot some things")
 parser.add_argument('action', help="what plot to generate")
@@ -262,7 +263,7 @@ def slowdown_cdf(args, datas):
 
     step = float(len(data)) / 5.0
     upper = 10
-    plt.axvline(3, color=COLORS[3])
+    plt.axvline(3, color=VLINE)
     plt.xlim((1,upper))
     ax.set_xticks(range(1, upper + 1))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
@@ -292,7 +293,7 @@ def slowdown_cdf_old(args, datas):
 
     step = float(len(means)) / 5.0
     upper = 10
-    plt.axvline(3, color=COLORS[-1])
+    plt.axvline(3, color=VLINE)
     plt.xlim((1,upper))
     ax.set_xticks(range(1, upper + 1))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
@@ -324,7 +325,7 @@ def slowdown_cdf_small(args, datas):
 
         upper = 3
 
-        plt.axvline(3, color=COLORS[-1])
+        plt.axvline(3, color=VLINE)
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
@@ -361,7 +362,7 @@ def slowdown_cdf_hidden(args, datas):
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        plt.axvline(3, color=COLORS[-1])
+        plt.axvline(3, color=VLINE)
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
