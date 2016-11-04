@@ -30,7 +30,7 @@ COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0),
 
 LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph', 'no-force-virtual-state', 'no-unroll', 'no-impersonator-loop']
 LINESTYLES = ['-', '--', ':']
-VLINE = (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0),
+VLINE = (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)
 
 parser = argparse.ArgumentParser(description="Plot some things")
 parser.add_argument('action', help="what plot to generate")
