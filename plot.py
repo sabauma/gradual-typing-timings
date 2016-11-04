@@ -24,8 +24,8 @@ GREEN  = (34.0 / 255.0, 139.0 / 255.0, 24.0 / 255.0)
 COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0),
           (36.0 / 255.0, 36.0 / 255.0, 140.0 / 255.0),
           GREEN,
-          (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0),
-          (0.0, 0.0, 0.0)
+          GREEN,
+          GREEN,
           ]
 
 LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph', 'no-force-virtual-state', 'no-unroll', 'no-impersonator-loop']
