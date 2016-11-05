@@ -136,7 +136,7 @@ def stats_table(args, datas):
 
     # print "%d &" % N,
     print " & ".join(rows),
-    print " & %0.2f" % untyped_untyped,
+    print " & $ %0.2f $" % untyped_untyped,
     print "\\\\"
 
 @plot
