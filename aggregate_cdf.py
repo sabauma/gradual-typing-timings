@@ -145,7 +145,6 @@ def slowdown_cdf(datas):
 
 
         for i in range(0, 2):
-            column = all_data[:,0]
             ax.scatter(all_data[:,0], all_data[:,i], label=LABELS[i], color=COLORS[i], marker='.')
             if i == 0:
                 continue
@@ -154,6 +153,13 @@ def slowdown_cdf(datas):
             print "y = %f * x + %f" % (m, b)
             y = m * x + b
             ax.plot(x, y, color=COLORS[i+2])
+            textX = np.max(all_data[:,0]) / 2.0
+            textY = np.max(all_data[:,i]) / 1.8
+            plt.text(textX, textY, '$y = %0.3f x + %0.3f$' % (m, b), fontsize=12,
+                     color=COLORS[i+2],
+                     horizontalalignment='center',
+                     verticalalignment='bottom')
+
 
         plt.legend(loc='upper left')
         plt.ylim((0, 70))
