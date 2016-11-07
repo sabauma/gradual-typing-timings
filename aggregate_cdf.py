@@ -136,15 +136,24 @@ def slowdown_cdf(datas):
 
     for number, data in enumerate(datas):
         plt.cla()
-        weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
+        weights   = [np.ones(d.means.shape[0]) / d.means.shape[0] for d in data]
         slowdowns = [d.means / d.means[0,0] for d in data]
 
         weights, slowdowns = pad_weights(weights, slowdowns)
         weights  = np.vstack(weights)
         all_data = np.vstack(slowdowns)
 
+
         for i in range(0, 2):
+            column = all_data[:,0]
             ax.scatter(all_data[:,0], all_data[:,i], label=LABELS[i], color=COLORS[i], marker='.')
+            if i == 0:
+                continue
+            m, b = np.polyfit(all_data[:,0], all_data[:,i], 1)
+            x = np.vstack([np.arange(0, 100, 0.01), np.ones(10000)]).T
+            print "y = %f * x + %f" % (m, b)
+            y = m * x + b
+            ax.plot(x, y, color=COLORS[i+2])
 
         plt.legend(loc='upper left')
         plt.ylim((0, 70))
