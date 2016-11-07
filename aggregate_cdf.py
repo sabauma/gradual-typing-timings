@@ -155,8 +155,8 @@ def slowdown_cdf(datas):
             ax.plot(x, y, color=COLORS[i+2])
             textX = np.max(all_data[:,0]) / 2.0
             textY = np.max(all_data[:,i]) / 1.8
-            plt.text(textX, textY, '$y = %0.3f x + %0.3f$' % (m, b), fontsize=12,
-                     color=COLORS[i+2],
+            plt.text(textX, textY, '$y = %0.3f x + %0.3f$' % (m, b), fontsize=15,
+                     color='k',
                      horizontalalignment='center',
                      verticalalignment='bottom')
 
