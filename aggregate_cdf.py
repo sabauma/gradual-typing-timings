@@ -137,32 +137,20 @@ def slowdown_cdf(datas):
     for number, data in enumerate(datas):
         plt.cla()
         weights   = [np.array([1.0 / float(d.means.shape[0])] * d.means.shape[0]) for d in data]
-        slowdowns = [d.means / d.means[0,:] for d in data]
+        slowdowns = [d.means / d.means[0,0] for d in data]
 
         weights, slowdowns = pad_weights(weights, slowdowns)
-        weights  = reduce(lambda a, b: np.append(a, b, axis=0), weights)
-        all_data = reduce(lambda a, b: np.append(a, b, axis=0), slowdowns)
+        weights  = np.vstack(weights)
+        all_data = np.vstack(slowdowns)
 
-        for i in range(1, 2):
-            ax.scatter(all_data[:,0] / all_data[0,0], all_data[:,i] / all_data[:,0], color=COLORS[i], label=LABELS[i])
+        for i in range(0, 2):
+            ax.scatter(all_data[:,0], all_data[:,i], label=LABELS[i], color=COLORS[i], marker='.')
 
-        max_width = int(round(np.max(all_data[:,0] / all_data[0,0]) / 10.0, 0) * 10)
-
-        perfect = np.arange(0.0, max_width, 0.001)[1:]
-        ax.plot(perfect, 1.0 / perfect, color=COLORS[-1])
-
-        if max_width > 100:
-            skip = 20
-        else:
-            skip = 10
-        ax.set_xticks(range(0, 10, 1) + range(10, max_width + 10, skip))
-        ax.set_xticklabels([0] + ['' for i in range(9)] + range(10, max_width + 10, skip))
-        ax.axhline(1.0, color=COLORS[0])
-        plt.ylim((0, 2))
-        plt.xlim((0, max_width))
-        ax.legend(loc='best')
+        plt.legend(loc='upper left')
+        plt.ylim((0, 70))
+        plt.xlim((0, 70))
         ax.set_xlabel("Racket gradual typing overhead")
-        ax.set_ylabel("Runtime relative to Racket")
+        ax.set_ylabel("overhead relative to Racket")
         plt.savefig("figs/aggregate-slowdown-%d.pdf" % number)
 
 if __name__ == '__main__':
