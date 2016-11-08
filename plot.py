@@ -29,7 +29,7 @@ COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0),
           ]
 
 LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph', 'no-force-virtual-state', 'no-unroll', 'no-impersonator-loop']
-LINESTYLES = ['-', '--', ':']
+LINESTYLES = ['-', '--', '-.']
 VLINE = (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)
 
 parser = argparse.ArgumentParser(description="Plot some things")
@@ -362,7 +362,7 @@ def slowdown_cdf_hidden(args, datas):
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
-            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number and number+1], label=LABELS[i], color=COLORS[i])
 
         plt.axvline(3, color=VLINE)
         plt.xlim((1,upper))
