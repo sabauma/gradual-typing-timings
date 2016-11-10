@@ -247,7 +247,12 @@ def aggregate_slowdown_cdf(args, datas):
         cdf = np.cumsum(counts) / entries * 100.0
         ax.plot(bin_edges[:-1], cdf, color=colors[i])
 
-    plt.xlim((1,10))
+    upper = 10
+    plt.axvline(3, color=VLINE)
+    ax.set_xticks(range(1, upper + 1))
+    ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+    plt.xlim((1,upper))
+    plt.ylim((0, 100))
 
 def colors_array(args):
     if not args.abscolor or args.systems is None:
@@ -294,7 +299,6 @@ def slowdown_cdf(args, datas):
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=colors[i])
 
-    step = float(len(data)) / 5.0
     upper = 10
     plt.axvline(3, color=VLINE)
     plt.xlim((1,upper))
