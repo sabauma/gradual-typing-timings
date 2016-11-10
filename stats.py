@@ -13,6 +13,10 @@ def read_raw_data(fname):
         print "failed on: ", fname
     else:
         keys = lnm.sanitize(variations)
+        # In the case of a single column, the resulting array will be one dimensional
+        # due to genfromtxt. In that case we pad on the extra dimension.
+        if len(times.shape) == 1:
+            times = times[:,np.newaxis]
         return keys, times
 
 def make_slowdown_data(fname):
