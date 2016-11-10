@@ -28,7 +28,7 @@ COLORS = [(255.0 / 255.0, 90.0 / 255.0, 20.0 / 255.0),
           GREEN,
           ]
 
-LABELS = ['racket', 'baseline', 'pycket', 'no-callgraph', 'no-force-virtual-state', 'no-unroll', 'no-impersonator-loop']
+LABELS = ['racket', 'pycket', 'baseline', 'no-callgraph', 'no-force-virtual-state', 'no-unroll', 'no-impersonator-loop']
 LINESTYLES = ['-', '--', '-.']
 VLINE = (218.0 / 255.0, 165.0 / 255.0, 32.0 / 255.0)
 
@@ -170,7 +170,7 @@ def mean_slowdown(args, datas):
     return False
 
 def pad_weights(weights, arrs):
-    needed = max(*[s.shape[-1] for s in arrs])
+    needed = max([s.shape[-1] for s in arrs])
     new_arrs, new_weights = [], []
 
     for weight, arr in zip(weights, arrs):
@@ -217,6 +217,37 @@ def aggregate_slowdown(args, datas):
         if output is None:
             outfile.write("\n")
     return False
+
+@plot
+def aggregate_slowdown_cdf(args, datas):
+    means   = [d.means for d in datas]
+    weights = [np.ones(mean.shape[0]) / float(mean.shape[0]) for mean in means]
+
+    norm = args.norm and args.norm[0]
+    if norm is None or norm == -1:
+        norm = Ellipsis
+    else:
+        assert norm >= 0
+    slowdowns = [m / m[0,norm] for m in means]
+
+    weights, slowdowns = pad_weights(weights, slowdowns)
+    weights = np.vstack(weights)
+    slowdowns = np.vstack(slowdowns)
+
+    systems = args.systems
+    if systems is not None:
+        slowdowns = slowdowns[:,systems]
+
+    colors = colors_array(args)
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+    for i in range(slowdowns.shape[-1]):
+        entries  = np.sum(weights[:,i])
+        slowdown = slowdowns[:,i]
+        counts, bin_edges = np.histogram(slowdown, bins=len(slowdown), weights=weights[:,i])
+        cdf = np.cumsum(counts) / entries * 100.0
+        ax.plot(bin_edges[:-1], cdf, color=colors[i])
+
+    plt.xlim((1,10))
 
 def colors_array(args):
     if not args.abscolor or args.systems is None:

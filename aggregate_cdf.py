@@ -24,7 +24,7 @@ COLORS = [(255.0 / 255.0, 90 / 255.0, 20 / 255.0), (36 / 255.0, 36 / 255.0, 140 
 LABELS = ['racket', 'pycket', 'baseline', 'no-callgraph']
 LINESTYLES = ['-', '--', ':']
 # MARKERS = ['s', 'o', 'o']
-SUFFIXES = ['Racket 6.5.0.6', 'Racket 6.2.1']
+SUFFIXES = ['Racket 6.6', 'Racket 6.2.1']
 
 def print_help():
     pass
