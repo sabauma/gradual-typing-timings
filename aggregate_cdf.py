@@ -155,7 +155,7 @@ def slowdown_cdf(datas):
             # m, b = np.polyfit(all_data[:,0], all_data[:,i], 1)
             m, b, r, _, _ = linregress(all_data[:,0], all_data[:,i])
             x = np.vstack([np.arange(0, 100, 0.01), np.ones(10000)]).T
-            print u"y = %f * x + %f : r² = %f" % (m, b, r ** 2)
+            print "y = %f * x + %f : r^2 = %f" % (m, b, r ** 2)
             y = m * x + b
             ax.plot(x, y, color=COLORS[i+2])
             textX = np.max(all_data[:,0]) / 2.0
