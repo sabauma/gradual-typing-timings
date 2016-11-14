@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from collections import namedtuple
 from itertools   import izip
@@ -10,8 +12,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import operator as op
 import os
-import stats
 import sys
+import scipy
+import stats
+from scipy.stats import linregress
 
 import matplotlib as mpl
 mpl.rc('lines', linewidth=3, color='r')
@@ -148,14 +152,15 @@ def slowdown_cdf(datas):
             ax.scatter(all_data[:,0], all_data[:,i], label=LABELS[i], color=COLORS[i], marker='.')
             if i == 0:
                 continue
-            m, b = np.polyfit(all_data[:,0], all_data[:,i], 1)
+            # m, b = np.polyfit(all_data[:,0], all_data[:,i], 1)
+            m, b, r, _, _ = linregress(all_data[:,0], all_data[:,i])
             x = np.vstack([np.arange(0, 100, 0.01), np.ones(10000)]).T
-            print "y = %f * x + %f" % (m, b)
+            print u"y = %f * x + %f : r² = %f" % (m, b, r ** 2)
             y = m * x + b
             ax.plot(x, y, color=COLORS[i+2])
             textX = np.max(all_data[:,0]) / 2.0
             textY = np.max(all_data[:,i]) / 1.8
-            plt.text(textX, textY, '$y = %0.3f x + %0.3f$' % (m, b), fontsize=20,
+            plt.text(textX, textY, '$y = %0.3f x + %0.3f$ \n $r^2 = %0.3f$' % (m, b, r**2), fontsize=20,
                      color='k',
                      horizontalalignment='center',
                      verticalalignment='bottom')
@@ -177,3 +182,4 @@ if __name__ == '__main__':
             continue
         outer[-1].append(read_data_files(arg))
     slowdown_cdf(outer)
+
