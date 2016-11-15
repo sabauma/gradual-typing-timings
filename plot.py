@@ -377,6 +377,8 @@ def slowdown_cdf_hidden(args, datas):
         upper = 5
     L = 0
 
+    LINESTYLES = ['-', ':']
+
     fig, ax = plt.subplots(nrows=1, ncols=1)
     for number, data in enumerate(datas):
         means = data.means
@@ -397,7 +399,7 @@ def slowdown_cdf_hidden(args, datas):
             counts, bin_edges = np.histogram(result, bins=max(entries, 1024))
             counts = counts * (100.0 / float(entries))
             cdf = np.cumsum(counts)
-            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number and number+1], label=LABELS[i], color=COLORS[i])
+            ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
         plt.axvline(3, color=VLINE)
         plt.xlim((1,upper))
