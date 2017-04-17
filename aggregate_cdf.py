@@ -111,8 +111,8 @@ def slowdown_cdf(datas):
         total_benchmarks = np.sum(weights, axis=0)
         avg_slowdown_weighted  = np.sum(weights * all_data, axis=0)  / total_benchmarks
         avg_slowdown_weighted1 = np.sum(weights * all_data1, axis=0) / total_benchmarks
-        s3 = np.sum(weights * (all_data < 3.0)  , axis=0) * 100.0  / total_benchmarks
-        s4 = np.sum(weights * (all_data1 < 3.0) , axis=0) * 100.0  / total_benchmarks
+        s3 = np.sum(weights * (all_data < 2.0)  , axis=0) * 100.0  / total_benchmarks
+        s4 = np.sum(weights * (all_data1 < 2.0) , axis=0) * 100.0  / total_benchmarks
         s5 = np.sum(weights * (all_data < 1.1)  , axis=0) * 100.0  / total_benchmarks
         s6 = np.sum(weights * (all_data1 < 1.1) , axis=0) * 100.0  / total_benchmarks
         s7 = np.sum(weights * (all_data2 < 1.1) , axis=0) * 100.0  / total_benchmarks

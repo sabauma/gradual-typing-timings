@@ -128,11 +128,11 @@ def stats_table(args, datas):
     max = np.max(slowdowns, axis=0)
     mean = np.mean(slowdowns, axis=0)
     ratio = slowdowns[-1,:]
-    acceptable = np.sum(slowdowns < 3.0, axis=0) / float(N) * 100.0
+    acceptable = np.sum(slowdowns < 2.0, axis=0) / float(N) * 100.0
 
-    stats = np.array([ratio, max, mean, acceptable])
+    stats = np.array([max, mean, acceptable])
 
-    rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.1f $ & $ %0.0f $" % tuple(stats[:,i]) for i in [0, 1]]
+    rows = ["$ %0.1f $ & $ %0.1f $ & $ %0.0f $" % tuple(stats[:,i]) for i in [0, 1]]
 
     # print "%d &" % N,
     print " & ".join(rows),
@@ -248,7 +248,7 @@ def aggregate_slowdown_cdf(args, datas):
         ax.plot(bin_edges[:-1], cdf, color=colors[i])
 
     upper = 10
-    plt.axvline(3, color=VLINE)
+    # plt.axvline(3, color=VLINE)
     ax.set_xticks(range(1, upper + 1))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
     plt.xlim((1,upper))
@@ -300,7 +300,7 @@ def slowdown_cdf(args, datas):
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=colors[i])
 
     upper = 10
-    plt.axvline(3, color=VLINE)
+    # plt.axvline(3, color=VLINE)
     plt.xlim((1,upper))
     ax.set_xticks(range(1, upper + 1))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
@@ -330,7 +330,7 @@ def slowdown_cdf_old(args, datas):
 
     step = float(len(means)) / 5.0
     upper = 10
-    plt.axvline(3, color=VLINE)
+    # plt.axvline(3, color=VLINE)
     plt.xlim((1,upper))
     ax.set_xticks(range(1, upper + 1))
     ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
@@ -362,7 +362,7 @@ def slowdown_cdf_small(args, datas):
 
         upper = 3
 
-        plt.axvline(3, color=VLINE)
+        # plt.axvline(3, color=VLINE)
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
@@ -401,7 +401,7 @@ def slowdown_cdf_hidden(args, datas):
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=COLORS[i])
 
-        plt.axvline(3, color=VLINE)
+        # plt.axvline(3, color=VLINE)
         plt.xlim((1,upper))
         ax.set_xticks(range(1, upper + 1))
         ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
