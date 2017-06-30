@@ -40,6 +40,8 @@ parser.add_argument('--args', nargs='+', default=None, type=str)
 parser.add_argument('--systems', nargs='+', default=None, type=int)
 parser.add_argument('--norm', nargs=1, default=None, type=int)
 parser.add_argument('--abscolor', action="store_true")
+parser.add_argument('--xmin', default=None, type=int)
+parser.add_argument('--xmax', default=None, type=int)
 
 PLOTS = {}
 
@@ -268,6 +270,16 @@ def slowdown_cdf(args, datas):
     else:
         LS = map(int, args.args)
 
+    if args.xmin is None:
+        xmin = 1
+    else:
+        xmin = args.xmin
+
+    if args.xmax is None:
+        xmax = 10
+    else:
+        xmax = args.xmax
+
     names = datas[0].names
     data = np.hstack([d.means for d in datas])
 
@@ -299,11 +311,10 @@ def slowdown_cdf(args, datas):
             cdf = np.cumsum(counts)
             ax.plot(bin_edges[:-1], cdf, LINESTYLES[number], label=LABELS[i], color=colors[i])
 
-    upper = 10
     # plt.axvline(3, color=VLINE)
-    plt.xlim((1,upper))
-    ax.set_xticks(range(1, upper + 1))
-    ax.set_xticklabels(["%dx" % (i + 1) for i in range(upper)])
+    plt.xlim((xmin, xmax))
+    ax.set_xticks(range(1, xmax + 1))
+    ax.set_xticklabels(["%dx" % (i + 1) for i in range(xmax)])
     plt.ylim((0, 100))
 
 @plot
