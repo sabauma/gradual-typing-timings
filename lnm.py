@@ -1,4 +1,5 @@
 
+import random
 import re
 import numpy as np
 from graph import Graph, immutable_array
@@ -36,6 +37,19 @@ def read_data(fname):
     times = np.genfromtxt(fname, usecols=(1,2,3), dtype='d')
     keys = sanitize(variations)
     return Graph.fromkeyvals(keys, times, adjacent_variations)
+
+def random_path(graph, N=-1):
+    graph = graph.graph
+    start = next(graph.itervalues())
+    i = 0
+    while N is None or i < N:
+        node = start
+        path = [node]
+        while node.adjacent:
+            node = random.choice(node.adjacent)
+            path.append(node)
+        yield path
+        i += 1
 
 ex = {'00': 1, '11': 2, '01': 3, '10': 4}
 
