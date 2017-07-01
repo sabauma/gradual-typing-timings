@@ -37,6 +37,8 @@ def read_data(fname):
     keys = sanitize(variations)
     return Graph.fromkeyvals(keys, times, adjacent_variations)
 
+ex = {'00': 1, '11': 2, '01': 3, '10': 4}
+
 # if __name__ == '__main__':
     # data = read_data('results_tetris.txt')
     # graph1 = compute_lnm_times(data, L=1)

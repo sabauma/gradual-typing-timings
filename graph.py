@@ -51,6 +51,17 @@ class NodeCounter(object):
             self.counter += 1
         return nid
 
+class Cons(object):
+    __slots__ = ('value', 'tail')
+    def __init__(self, value, tail):
+        self.value = value
+        self.tail = tail
+
+    def __iter__(self):
+        while self is not None:
+            yield self.value
+            self = self.tail
+
 class Graph(object):
 
     def __init__(self, graph):
@@ -75,6 +86,20 @@ class Graph(object):
         graph = self.graph
         keys  = graph.keys()
         return (keys, immutable_array([graph[key].payload for key in keys]))
+
+    def all_paths(self, start, end=None):
+        """
+        Iterate through all the paths in the graph.
+        """
+        start_node = self.graph[start]
+        todo = [(start_node, None)]
+        while todo:
+            curr, path = todo.pop()
+            if curr is end or not curr.adjacent:
+                yield list(path)[::-1]
+            path = Cons(curr, path)
+            for node in curr.adjacent:
+                todo.append((node, path))
 
     def networkx_graph(self):
         import networkx as nx
@@ -118,10 +143,9 @@ class Graph(object):
         from itertools import izip
         return Graph.fromfunc(izip(keys, vals), adjacent)
 
-ex = {'00': 1, '11': 2, '01': 3, '10': 4}
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # import networkx as nx
-    # g = Graph.fromdict(ex)
+    g = Graph.fromkeyvals(*zip(*ex))
     # print nx.draw(g.display())
 
